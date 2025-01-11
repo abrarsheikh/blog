@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Attention Mechanisms: Memory-Efficient Techniques and Implementations – blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#word-of-caution" id="toc-word-of-caution" class="nav-link active" data-scroll-target="#word-of-caution">Word of Caution</a></li>
+  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention">Multi-Head Attention</a></li>
+  <li><a href="#multi-head-attention-with-kv-cache" id="toc-multi-head-attention-with-kv-cache" class="nav-link" data-scroll-target="#multi-head-attention-with-kv-cache">Multi-Head Attention with KV Cache</a>
+  <ul class="collapse">
+  <li><a href="#key-differences-and-modifications" id="toc-key-differences-and-modifications" class="nav-link" data-scroll-target="#key-differences-and-modifications">Key Differences and Modifications</a></li>
+  <li><a href="#efficiency" id="toc-efficiency" class="nav-link" data-scroll-target="#efficiency">Efficiency</a></li>
+  </ul></li>
+  <li><a href="#group-query-attention-with-kv-cache" id="toc-group-query-attention-with-kv-cache" class="nav-link" data-scroll-target="#group-query-attention-with-kv-cache">Group Query Attention with KV Cache</a>
+  <ul class="collapse">
+  <li><a href="#key-differences-and-modifications-1" id="toc-key-differences-and-modifications-1" class="nav-link" data-scroll-target="#key-differences-and-modifications-1">Key Differences and Modifications</a></li>
+  </ul></li>
+  <li><a href="#multi-head-latent-attention-mla" id="toc-multi-head-latent-attention-mla" class="nav-link" data-scroll-target="#multi-head-latent-attention-mla">Multi-Head Latent Attention (MLA)</a></li>
+  <li><a href="#memory-usage-comparison" id="toc-memory-usage-comparison" class="nav-link" data-scroll-target="#memory-usage-comparison">Memory Usage Comparison</a>
+  <ul class="collapse">
+  <li><a href="#memory-comparison" id="toc-memory-comparison" class="nav-link" data-scroll-target="#memory-comparison">Memory Comparison</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Attention Mechanisms: Memory-Efficient Techniques and Implementations</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="cell-1" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> math</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> time</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">from</span> torch.profiler <span class="im">import</span> profile, record_function, ProfilerActivity</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this notebook, we explore various attention mechanisms used in deep learning, focusing on their memory usage and efficiency. We begin with a fundamental comparison between Multi-Head Attention (MHA) and Group Query Attention, highlighting how the latter reduces memory requirements by sharing key-value matrices across multiple query heads.</p>
+<p>We then delve into the concept of Multi-Query Attention, which further optimizes memory by using a single key-value matrix for all query heads. To take memory efficiency to the next level, we introduce Multi-Head Latent Attention (MLA), a technique that compresses the key-value matrices into a lower-dimensional latent space, drastically reducing memory usage while maintaining the ability to compute attention.</p>
+<p>Throughout the notebook, we provide detailed explanations of these techniques, including their memory usage formulas, followed by Python implementations of each attention mechanism to demonstrate their practical applications. The goal is to provide both theoretical insights and hands-on experience in optimizing attention mechanisms for large-scale models.</p>
+<section id="word-of-caution" class="level3">
+<h3 class="anchored" data-anchor-id="word-of-caution">Word of Caution</h3>
+<ul>
+<li>Self-Learning Tool: This notebook is primarily a personal self-learning resource. As a hobbyist passionate about learning and sharing, I’ve put this together to better understand and experiment with various attention mechanisms. The explanations and code are meant to be accessible to those interested in the same journey.</li>
+<li>Performance Not Optimized: The implementations provided here are not optimized for production-level performance. For example, real-world applications typically use optimized libraries like Flash Attention, but in this notebook, the focus is on simplicity and clarity. The code is written to be easily understandable, not for efficiency at scale.</li>
+<li>Incomplete Implementations: While the core attention mechanisms are implemented, the notebook does not include all real-world enhancements. For instance, positional encodings, such as RoPE (Rotary Positional Encoding), are not integrated here but are an essential part of most attention mechanisms in practical applications.</li>
+<li>No Ablation Studies: This notebook does not attempt to conduct ablation studies or determine which attention mechanism is “better” in terms of performance or accuracy. The goal is not to provide a comprehensive comparison but rather to explore and observe how different attention mechanisms affect memory usage and performance in a simplified context.</li>
+</ul>
+<div id="cell-4" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>MAX_BATCH_SIZE <span class="op">=</span> <span class="dv">4</span> <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> <span class="dv">16</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>MAX_SEQ_LEN <span class="op">=</span> <span class="dv">128</span> <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> <span class="dv">1024</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="multi-head-attention" class="level2">
+<h2 class="anchored" data-anchor-id="multi-head-attention">Multi-Head Attention</h2>
+<p>Multi-Head Attention is a core component of transformer models that allows the model to focus on different parts of the input sequence simultaneously. It involves multiple attention heads, each computing scaled dot-product attention independently, followed by a concatenation of the results and a final linear transformation.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/multi-head-attention_l1A3G7a.png" class="img-fluid figure-img"></p>
+<figcaption>MHA</figcaption>
+</figure>
+</div>
+<section id="input-transformation" class="level4">
+<h4 class="anchored" data-anchor-id="input-transformation">1. Input Transformation:</h4>
+<p>For an input sequence <span class="math inline">\(X \in \mathbb{R}^{T \times d_{\text{model}}}\)</span>, where <span class="math inline">\(T\)</span> is the sequence length and <span class="math inline">\(d_{\text{model}}\)</span> is the model’s hidden size, the inputs are transformed into query, key, and value matrices:</p>
+<p><span class="math display">\[
+Q = X W_Q, \quad K = X W_K, \quad V = X W_V
+\]</span></p>
+<p>Here:</p>
+<ul>
+<li><span class="math inline">\(W_Q, W_K, W_V \in \mathbb{R}^{d_{\text{model}} \times d_k}\)</span> are learnable projection matrices.</li>
+<li><span class="math inline">\(Q, K, V \in \mathbb{R}^{T \times d_k}\)</span></li>
+</ul>
+</section>
+<section id="scaled-dot-product-attention" class="level4">
+<h4 class="anchored" data-anchor-id="scaled-dot-product-attention">2. Scaled Dot-Product Attention:</h4>
+<p>For a single attention head, attention scores are computed as:</p>
+<p><span class="math display">\[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}}\right)V
+\]</span></p>
+<p>Here:</p>
+<ul>
+<li><span class="math inline">\(Q K^\top \in \mathbb{R}^{T \times T}\)</span> represents the similarity scores between queries and keys.</li>
+<li><span class="math inline">\(\frac{1}{\sqrt{d_k}}\)</span> is a scaling factor to prevent large values in the softmax.</li>
+<li><span class="math inline">\(\text{softmax}(\cdot)\)</span> normalizes the scores across the sequence.</li>
+</ul>
+</section>
+<section id="multi-head-attention-1" class="level4">
+<h4 class="anchored" data-anchor-id="multi-head-attention-1">3. Multi-Head Attention:</h4>
+<p>Splitting <span class="math inline">\(d_{\text{model}}\)</span> into multiple heads in Multi-Head Attention allows the model to focus on different parts of the input sequence simultaneously. Each attention head operates on a subset of the dimensions (<span class="math inline">\(d_k = d_{\text{model}} / h\)</span>), enabling the model to capture diverse patterns or relationships in the data, such as local and global dependencies.</p>
+<p>This parallel processing improves the expressiveness of the attention mechanism, allowing it to learn richer representations compared to a single attention head. By combining the outputs of all heads, the model integrates these diverse perspectives into a more comprehensive understanding of the input.</p>
+<p>Instead of using a single attention head, multiple heads are used. Each head has its own projection matrices <span class="math inline">\(W_Q^i, W_K^i, W_V^i\)</span> and computes attention independently:</p>
+<p><span class="math display">\[
+\text{head}_i = \text{Attention}(Q W_Q^i, K W_K^i, V W_V^i)
+\]</span></p>
+<p>The outputs of all heads are concatenated and projected back to <span class="math inline">\(d_{\text{model}}\)</span>:</p>
+<p><span class="math display">\[
+\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) W_O
+\]</span></p>
+<p>Here:</p>
+<ul>
+<li><span class="math inline">\(W_O \in \mathbb{R}^{(h \cdot d_k) \times d_{\text{model}}}\)</span> is a projection matrix for combining all heads.</li>
+<li><span class="math inline">\(h\)</span> is the number of attention heads.</li>
+</ul>
+<div id="cell-7" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">class</span> MultiHeadAttention(nn.Module):</span>
+<span id="cb3-2"><a href="#cb3-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>):</span>
+<span id="cb3-3"><a href="#cb3-3"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb3-4"><a href="#cb3-4"></a>        <span class="co"># Total embedding dimension</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>        <span class="va">self</span>.dim <span class="op">=</span> dim</span>
+<span id="cb3-6"><a href="#cb3-6"></a>        <span class="co"># Number of attention heads</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>        <span class="va">self</span>.n_heads <span class="op">=</span> n_heads</span>
+<span id="cb3-8"><a href="#cb3-8"></a>        <span class="co"># Dimension of each attention head</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>        <span class="va">self</span>.head_dim <span class="op">=</span> dim <span class="op">//</span> n_heads</span>
+<span id="cb3-10"><a href="#cb3-10"></a>        <span class="co"># Query projection matrix: maps input to query vectors</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>        <span class="va">self</span>.wq <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb3-12"><a href="#cb3-12"></a>        <span class="co"># Key projection matrix: maps input to key vectors</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a>        <span class="va">self</span>.wk <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb3-14"><a href="#cb3-14"></a>        <span class="co"># Value projection matrix: maps input to value vectors</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>        <span class="va">self</span>.wv <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb3-16"><a href="#cb3-16"></a>        <span class="co"># Output projection matrix: combines and maps attention outputs back to model dimension</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a>        <span class="va">self</span>.wo <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb3-18"><a href="#cb3-18"></a></span>
+<span id="cb3-19"><a href="#cb3-19"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb3-20"><a href="#cb3-20"></a>        <span class="co"># Input shape: (batch_size, seq_len, dim)</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a>        batch_size, seq_len, _ <span class="op">=</span> x.shape</span>
+<span id="cb3-22"><a href="#cb3-22"></a></span>
+<span id="cb3-23"><a href="#cb3-23"></a>        <span class="co"># Linear projections - output shapes: (batch_size, seq_len, dim)</span></span>
+<span id="cb3-24"><a href="#cb3-24"></a>        q <span class="op">=</span> <span class="va">self</span>.wq(x)</span>
+<span id="cb3-25"><a href="#cb3-25"></a>        k <span class="op">=</span> <span class="va">self</span>.wk(x)</span>
+<span id="cb3-26"><a href="#cb3-26"></a>        v <span class="op">=</span> <span class="va">self</span>.wv(x)</span>
+<span id="cb3-27"><a href="#cb3-27"></a></span>
+<span id="cb3-28"><a href="#cb3-28"></a>        <span class="co"># Reshape to separate heads and transpose to get shape:</span></span>
+<span id="cb3-29"><a href="#cb3-29"></a>        <span class="co"># (batch_size, n_heads, seq_len, head_dim)</span></span>
+<span id="cb3-30"><a href="#cb3-30"></a>        q <span class="op">=</span> q.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb3-31"><a href="#cb3-31"></a>        k <span class="op">=</span> k.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb3-32"><a href="#cb3-32"></a>        v <span class="op">=</span> v.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb3-33"><a href="#cb3-33"></a></span>
+<span id="cb3-34"><a href="#cb3-34"></a>        <span class="co"># Compute attention scores</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a>        <span class="co"># q @ k.T shape: (batch_size, n_heads, seq_len, seq_len)</span></span>
+<span id="cb3-36"><a href="#cb3-36"></a>        scores <span class="op">=</span> torch.matmul(q, k.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="op">/</span> math.sqrt(<span class="va">self</span>.head_dim)</span>
+<span id="cb3-37"><a href="#cb3-37"></a></span>
+<span id="cb3-38"><a href="#cb3-38"></a>        <span class="co"># Create causal mask of shape (seq_len, seq_len)</span></span>
+<span id="cb3-39"><a href="#cb3-39"></a>        mask <span class="op">=</span> torch.tril(torch.ones(seq_len, seq_len)).to(x.device)</span>
+<span id="cb3-40"><a href="#cb3-40"></a>        scores <span class="op">=</span> scores.masked_fill(mask <span class="op">==</span> <span class="dv">0</span>, <span class="bu">float</span>(<span class="st">"-inf"</span>))</span>
+<span id="cb3-41"><a href="#cb3-41"></a>        scores <span class="op">=</span> scores.softmax(dim<span class="op">=-</span><span class="dv">1</span>)  <span class="co"># Normalize scores</span></span>
+<span id="cb3-42"><a href="#cb3-42"></a></span>
+<span id="cb3-43"><a href="#cb3-43"></a>        <span class="co"># Apply attention to values</span></span>
+<span id="cb3-44"><a href="#cb3-44"></a>        <span class="co"># output shape: (batch_size, n_heads, seq_len, head_dim)</span></span>
+<span id="cb3-45"><a href="#cb3-45"></a>        output <span class="op">=</span> torch.matmul(scores, v)</span>
+<span id="cb3-46"><a href="#cb3-46"></a></span>
+<span id="cb3-47"><a href="#cb3-47"></a>        <span class="co"># Reshape back to (batch_size, seq_len, dim)</span></span>
+<span id="cb3-48"><a href="#cb3-48"></a>        output <span class="op">=</span> output.transpose(<span class="dv">1</span>, <span class="dv">2</span>).contiguous().view(batch_size, seq_len, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb3-49"><a href="#cb3-49"></a>        <span class="cf">return</span> <span class="va">self</span>.wo(output)  <span class="co"># Final linear projection</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="multi-head-attention-with-kv-cache" class="level2">
+<h2 class="anchored" data-anchor-id="multi-head-attention-with-kv-cache">Multi-Head Attention with KV Cache</h2>
+<p>Multi-Head Attention with KV Cache is an optimization technique used in transformer models to improve efficiency during autoregressive tasks, such as language generation. Instead of recomputing the key (<span class="math inline">\(K\)</span>) and value (<span class="math inline">\(V\)</span>) matrices for all tokens in the sequence at each step, previously computed <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> are cached and reused.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/key-value-caching_.png" class="img-fluid figure-img"></p>
+<figcaption>KV Cache</figcaption>
+</figure>
+</div>
+<section id="key-differences-and-modifications" class="level3">
+<h3 class="anchored" data-anchor-id="key-differences-and-modifications">Key Differences and Modifications</h3>
+<section id="caching-keys-and-values" class="level4">
+<h4 class="anchored" data-anchor-id="caching-keys-and-values">Caching Keys and Values</h4>
+<p>In standard Multi-Head Attention, <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> are recomputed for the entire input sequence. With KV caching, only the new token’s query (<span class="math inline">\(Q\)</span>) is processed, while <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> from previous steps are stored and concatenated:</p>
+<p><span class="math display">\[
+K_{\text{cached}} = \text{Concat}(K_{\text{prev}}, K_{\text{new}}), \quad V_{\text{cached}} = \text{Concat}(V_{\text{prev}}, V_{\text{new}})
+\]</span></p>
+<p>Here: - <span class="math inline">\(K_{\text{prev}}\)</span> and <span class="math inline">\(V_{\text{prev}}\)</span> are the cached keys and values from earlier time steps. - <span class="math inline">\(K_{\text{new}}\)</span> and <span class="math inline">\(V_{\text{new}}\)</span> are the keys and values for the current token.</p>
+</section>
+<section id="computing-attention" class="level4">
+<h4 class="anchored" data-anchor-id="computing-attention">Computing Attention</h4>
+<p>The attention mechanism remains the same but operates over the concatenated cached keys and values:</p>
+<p><span class="math display">\[
+\text{Attention}(Q, K_{\text{cached}}, V_{\text{cached}}) = \text{softmax}\left(\frac{Q K_{\text{cached}}^\top}{\sqrt{d_k}}\right)V_{\text{cached}}
+\]</span></p>
+</section>
+</section>
+<section id="efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="efficiency">Efficiency</h3>
+<ul>
+<li><strong>Reduced Redundancy</strong>: By caching, recomputation of ( K ) and ( V ) for all tokens is avoided, significantly speeding up inference for long sequences.</li>
+<li><strong>Scalability</strong>: This makes the model more memory-efficient, especially for real-time or autoregressive tasks like text generation.</li>
+</ul>
+<div id="cell-10" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> MultiHeadAttentionKVCache(nn.Module):</span>
+<span id="cb4-2"><a href="#cb4-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>):</span>
+<span id="cb4-3"><a href="#cb4-3"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb4-4"><a href="#cb4-4"></a>        <span class="va">self</span>.dim <span class="op">=</span> dim</span>
+<span id="cb4-5"><a href="#cb4-5"></a>        <span class="va">self</span>.n_heads <span class="op">=</span> n_heads</span>
+<span id="cb4-6"><a href="#cb4-6"></a>        <span class="va">self</span>.head_dim <span class="op">=</span> dim <span class="op">//</span> n_heads</span>
+<span id="cb4-7"><a href="#cb4-7"></a>        <span class="va">self</span>.wq <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb4-8"><a href="#cb4-8"></a>        <span class="va">self</span>.wk <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb4-9"><a href="#cb4-9"></a>        <span class="va">self</span>.wv <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb4-10"><a href="#cb4-10"></a>        <span class="va">self</span>.wo <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb4-11"><a href="#cb4-11"></a></span>
+<span id="cb4-12"><a href="#cb4-12"></a>        <span class="va">self</span>.register_buffer(</span>
+<span id="cb4-13"><a href="#cb4-13"></a>            <span class="st">"cache_k"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14"></a>            torch.zeros(MAX_BATCH_SIZE, MAX_SEQ_LEN, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim),</span>
+<span id="cb4-15"><a href="#cb4-15"></a>        )</span>
+<span id="cb4-16"><a href="#cb4-16"></a>        <span class="va">self</span>.register_buffer(</span>
+<span id="cb4-17"><a href="#cb4-17"></a>            <span class="st">"cache_v"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18"></a>            torch.zeros(MAX_BATCH_SIZE, MAX_SEQ_LEN, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim),</span>
+<span id="cb4-19"><a href="#cb4-19"></a>        )</span>
+<span id="cb4-20"><a href="#cb4-20"></a></span>
+<span id="cb4-21"><a href="#cb4-21"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor, start_pos: <span class="bu">int</span>) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb4-22"><a href="#cb4-22"></a>        batch_size, seq_len, _ <span class="op">=</span> x.shape</span>
+<span id="cb4-23"><a href="#cb4-23"></a>        <span class="cf">assert</span> seq_len <span class="op">==</span> <span class="dv">1</span>, <span class="st">"seq_len must be 1"</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a>        q <span class="op">=</span> <span class="va">self</span>.wq(x)</span>
+<span id="cb4-25"><a href="#cb4-25"></a>        k <span class="op">=</span> <span class="va">self</span>.wk(x)</span>
+<span id="cb4-26"><a href="#cb4-26"></a>        v <span class="op">=</span> <span class="va">self</span>.wv(x)</span>
+<span id="cb4-27"><a href="#cb4-27"></a></span>
+<span id="cb4-28"><a href="#cb4-28"></a>        q <span class="op">=</span> q.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb4-29"><a href="#cb4-29"></a>        k <span class="op">=</span> k.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb4-30"><a href="#cb4-30"></a>        v <span class="op">=</span> v.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb4-31"><a href="#cb4-31"></a></span>
+<span id="cb4-32"><a href="#cb4-32"></a>        <span class="co"># Store current k,v in cache at position start_pos</span></span>
+<span id="cb4-33"><a href="#cb4-33"></a>        <span class="co"># k shape: (batch_size, 1, n_heads, head_dim)</span></span>
+<span id="cb4-34"><a href="#cb4-34"></a>        <span class="co"># cache_k shape: (MAX_BATCH_SIZE, MAX_SEQ_LEN, n_heads, head_dim)</span></span>
+<span id="cb4-35"><a href="#cb4-35"></a>        <span class="va">self</span>.cache_k[:batch_size, start_pos : start_pos <span class="op">+</span> seq_len, :, :] <span class="op">=</span> k</span>
+<span id="cb4-36"><a href="#cb4-36"></a>        <span class="va">self</span>.cache_v[:batch_size, start_pos : start_pos <span class="op">+</span> seq_len, :, :] <span class="op">=</span> v</span>
+<span id="cb4-37"><a href="#cb4-37"></a></span>
+<span id="cb4-38"><a href="#cb4-38"></a>        <span class="co"># Retrieve cached k,v up to current position for attention computation</span></span>
+<span id="cb4-39"><a href="#cb4-39"></a>        <span class="co"># Retrieved k shape: (batch_size, start_pos+1, n_heads, head_dim)</span></span>
+<span id="cb4-40"><a href="#cb4-40"></a>        <span class="co"># This allows attending to all previous tokens plus current token</span></span>
+<span id="cb4-41"><a href="#cb4-41"></a>        k <span class="op">=</span> <span class="va">self</span>.cache_k[:batch_size, : start_pos <span class="op">+</span> seq_len, :, :]</span>
+<span id="cb4-42"><a href="#cb4-42"></a>        v <span class="op">=</span> <span class="va">self</span>.cache_v[:batch_size, : start_pos <span class="op">+</span> seq_len, :, :]</span>
+<span id="cb4-43"><a href="#cb4-43"></a></span>
+<span id="cb4-44"><a href="#cb4-44"></a>        q <span class="op">=</span> q.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb4-45"><a href="#cb4-45"></a>        k <span class="op">=</span> k.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb4-46"><a href="#cb4-46"></a>        v <span class="op">=</span> v.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb4-47"><a href="#cb4-47"></a></span>
+<span id="cb4-48"><a href="#cb4-48"></a>        scores <span class="op">=</span> torch.matmul(q, k.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="op">/</span> math.sqrt(<span class="va">self</span>.head_dim)</span>
+<span id="cb4-49"><a href="#cb4-49"></a>        scores <span class="op">=</span> scores.softmax(dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb4-50"><a href="#cb4-50"></a>        output <span class="op">=</span> torch.matmul(scores, v)</span>
+<span id="cb4-51"><a href="#cb4-51"></a>        <span class="co"># Concatenate heads and apply output projection</span></span>
+<span id="cb4-52"><a href="#cb4-52"></a>        output <span class="op">=</span> output.transpose(<span class="dv">1</span>, <span class="dv">2</span>).contiguous().view(batch_size, seq_len, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb4-53"><a href="#cb4-53"></a>        <span class="cf">return</span> <span class="va">self</span>.wo(output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="group-query-attention-with-kv-cache" class="level2">
+<h2 class="anchored" data-anchor-id="group-query-attention-with-kv-cache">Group Query Attention with KV Cache</h2>
+<p>Group Query Attention with KV Cache is an extension of multi-head attention where multiple query heads attend to the same cached key and value pairs. This allows the model to efficiently process key-value caches while reusing the same key-value heads across multiple queries, improving performance, especially in autoregressive tasks.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/what-is-grouped-query-attention-gqa.32669ace.png" class="img-fluid figure-img"></p>
+<figcaption>GQA</figcaption>
+</figure>
+</div>
+<section id="key-differences-and-modifications-1" class="level3">
+<h3 class="anchored" data-anchor-id="key-differences-and-modifications-1">Key Differences and Modifications</h3>
+<section id="grouping-query-heads" class="level4">
+<h4 class="anchored" data-anchor-id="grouping-query-heads">Grouping Query Heads</h4>
+<p>Instead of having separate key-value heads for each query head, the model groups query heads that attend to the same cached key and value heads. The number of query heads per group is determined by dividing the total number of query heads by the number of key-value heads.</p>
+<p><span class="math display">\[
+\text{kv\_per\_head} = \frac{n_{\text{heads}}}{n_{\text{kv\_heads}}}
+\]</span></p>
+</section>
+<section id="key-and-value-caching" class="level4">
+<h4 class="anchored" data-anchor-id="key-and-value-caching">Key and Value Caching</h4>
+<p>As the attention mechanism processes input tokens, the keys (<span class="math inline">\(K\)</span>) and values (<span class="math inline">\(V\)</span>) for earlier tokens are cached to avoid recomputation in subsequent time steps. These cached keys and values are stored in buffers, which are updated at each new time step:</p>
+<p><span class="math display">\[
+\text{cache } K[:, \text{start\_pos}: \text{start\_pos}+1, :, :] = K
+\]</span> <span class="math display">\[
+\text{cache } V[:, \text{start\_pos}: \text{start\_pos}+1, :, :] = V
+\]</span></p>
+<p>The cached keys and values are then used in the computation of attention scores, reducing the need for recalculating them for each new token.</p>
+</section>
+<section id="attention-computation" class="level4">
+<h4 class="anchored" data-anchor-id="attention-computation">Attention Computation</h4>
+<p>For each query head in the group, attention is computed over the cached keys and values. The key and value matrices are repeated across multiple query heads (i.e., the <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> tensors are repeated <span class="math inline">\(\text{kv\_per\_head}\)</span> times) to account for multiple query heads attending to the same set of key-value heads:</p>
+<p><span class="math display">\[
+K = K \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
+\]</span> <span class="math display">\[
+V = V \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
+\]</span></p>
+</section>
+<section id="scaled-dot-product-attention-1" class="level4">
+<h4 class="anchored" data-anchor-id="scaled-dot-product-attention-1">Scaled Dot-Product Attention</h4>
+<p>The attention scores are computed as the dot product between the queries and the keys, followed by a scaling factor to normalize the scores:</p>
+<p><span class="math display">\[
+\text{scores} = \frac{Q K^\top}{\sqrt{d_k}}
+\]</span></p>
+<p>Here, <span class="math inline">\(Q\)</span> is the query matrix, <span class="math inline">\(K^\top\)</span> is the transpose of the key matrix, and <span class="math inline">\(d_k\)</span> is the dimensionality of the key vectors.</p>
+<p>The attention scores are then normalized using softmax:</p>
+<p><span class="math display">\[
+\text{scores} = \text{softmax}(\text{scores}, \text{dim}=-1)
+\]</span></p>
+<p>These attention scores are then used to weight the values:</p>
+<p><span class="math display">\[
+\text{output} = \text{scores} \cdot V
+\]</span></p>
+<div id="cell-13" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">class</span> GroupQueryAttentionKVCache(nn.Module):</span>
+<span id="cb5-2"><a href="#cb5-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>, n_kv_heads: <span class="bu">int</span>):</span>
+<span id="cb5-3"><a href="#cb5-3"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb5-4"><a href="#cb5-4"></a>        <span class="va">self</span>.dim <span class="op">=</span> dim</span>
+<span id="cb5-5"><a href="#cb5-5"></a>        <span class="va">self</span>.n_heads <span class="op">=</span> n_heads</span>
+<span id="cb5-6"><a href="#cb5-6"></a>        <span class="va">self</span>.n_kv_heads <span class="op">=</span> n_kv_heads</span>
+<span id="cb5-7"><a href="#cb5-7"></a>        <span class="va">self</span>.kv_per_head <span class="op">=</span> n_heads <span class="op">//</span> n_kv_heads</span>
+<span id="cb5-8"><a href="#cb5-8"></a>        <span class="cf">assert</span> (</span>
+<span id="cb5-9"><a href="#cb5-9"></a>            <span class="va">self</span>.kv_per_head <span class="op">*</span> <span class="va">self</span>.n_kv_heads <span class="op">==</span> <span class="va">self</span>.n_heads</span>
+<span id="cb5-10"><a href="#cb5-10"></a>        ), <span class="st">"n_kv_heads must be a divisor of n_heads"</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>        <span class="va">self</span>.head_dim <span class="op">=</span> dim <span class="op">//</span> n_heads</span>
+<span id="cb5-12"><a href="#cb5-12"></a>        <span class="cf">assert</span> <span class="va">self</span>.head_dim <span class="op">*</span> <span class="va">self</span>.n_heads <span class="op">==</span> dim, <span class="st">"dim must be a multiple of n_heads"</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a>        <span class="va">self</span>.wq <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb5-14"><a href="#cb5-14"></a>        <span class="va">self</span>.wk <span class="op">=</span> nn.Linear(dim, n_kv_heads <span class="op">*</span> <span class="va">self</span>.head_dim)</span>
+<span id="cb5-15"><a href="#cb5-15"></a>        <span class="va">self</span>.wv <span class="op">=</span> nn.Linear(dim, n_kv_heads <span class="op">*</span> <span class="va">self</span>.head_dim)</span>
+<span id="cb5-16"><a href="#cb5-16"></a>        <span class="va">self</span>.wo <span class="op">=</span> nn.Linear(dim, dim)</span>
+<span id="cb5-17"><a href="#cb5-17"></a></span>
+<span id="cb5-18"><a href="#cb5-18"></a>        <span class="va">self</span>.register_buffer(</span>
+<span id="cb5-19"><a href="#cb5-19"></a>            <span class="st">"cache_k"</span>,</span>
+<span id="cb5-20"><a href="#cb5-20"></a>            torch.zeros(MAX_BATCH_SIZE, MAX_SEQ_LEN, <span class="va">self</span>.n_kv_heads, <span class="va">self</span>.head_dim),</span>
+<span id="cb5-21"><a href="#cb5-21"></a>        )</span>
+<span id="cb5-22"><a href="#cb5-22"></a>        <span class="va">self</span>.register_buffer(</span>
+<span id="cb5-23"><a href="#cb5-23"></a>            <span class="st">"cache_v"</span>,</span>
+<span id="cb5-24"><a href="#cb5-24"></a>            torch.zeros(MAX_BATCH_SIZE, MAX_SEQ_LEN, <span class="va">self</span>.n_kv_heads, <span class="va">self</span>.head_dim),</span>
+<span id="cb5-25"><a href="#cb5-25"></a>        )</span>
+<span id="cb5-26"><a href="#cb5-26"></a></span>
+<span id="cb5-27"><a href="#cb5-27"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor, start_pos: <span class="bu">int</span>):</span>
+<span id="cb5-28"><a href="#cb5-28"></a>        batch_size, seq_len, _ <span class="op">=</span> x.shape</span>
+<span id="cb5-29"><a href="#cb5-29"></a>        <span class="cf">assert</span> seq_len <span class="op">==</span> <span class="dv">1</span>, <span class="st">"seq_len must be 1"</span></span>
+<span id="cb5-30"><a href="#cb5-30"></a></span>
+<span id="cb5-31"><a href="#cb5-31"></a>        q <span class="op">=</span> <span class="va">self</span>.wq(x)</span>
+<span id="cb5-32"><a href="#cb5-32"></a>        k <span class="op">=</span> <span class="va">self</span>.wk(x)</span>
+<span id="cb5-33"><a href="#cb5-33"></a>        v <span class="op">=</span> <span class="va">self</span>.wv(x)</span>
+<span id="cb5-34"><a href="#cb5-34"></a></span>
+<span id="cb5-35"><a href="#cb5-35"></a>        q <span class="op">=</span> q.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb5-36"><a href="#cb5-36"></a>        k <span class="op">=</span> k.view(batch_size, seq_len, <span class="va">self</span>.n_kv_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb5-37"><a href="#cb5-37"></a>        v <span class="op">=</span> v.view(batch_size, seq_len, <span class="va">self</span>.n_kv_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb5-38"><a href="#cb5-38"></a></span>
+<span id="cb5-39"><a href="#cb5-39"></a>        <span class="va">self</span>.cache_k[:batch_size, start_pos : start_pos <span class="op">+</span> seq_len, :, :] <span class="op">=</span> k</span>
+<span id="cb5-40"><a href="#cb5-40"></a>        <span class="va">self</span>.cache_v[:batch_size, start_pos : start_pos <span class="op">+</span> seq_len, :, :] <span class="op">=</span> v</span>
+<span id="cb5-41"><a href="#cb5-41"></a></span>
+<span id="cb5-42"><a href="#cb5-42"></a>        k <span class="op">=</span> <span class="va">self</span>.cache_k[:batch_size, : start_pos <span class="op">+</span> seq_len, :, :]</span>
+<span id="cb5-43"><a href="#cb5-43"></a>        v <span class="op">=</span> <span class="va">self</span>.cache_v[:batch_size, : start_pos <span class="op">+</span> seq_len, :, :]</span>
+<span id="cb5-44"><a href="#cb5-44"></a></span>
+<span id="cb5-45"><a href="#cb5-45"></a>        q <span class="op">=</span> q.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb5-46"><a href="#cb5-46"></a>        k <span class="op">=</span> k.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb5-47"><a href="#cb5-47"></a>        v <span class="op">=</span> v.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb5-48"><a href="#cb5-48"></a></span>
+<span id="cb5-49"><a href="#cb5-49"></a>        <span class="co"># repeat each head of k, v self.kv_per_head times</span></span>
+<span id="cb5-50"><a href="#cb5-50"></a>        k <span class="op">=</span> k.repeat_interleave(<span class="va">self</span>.kv_per_head, dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-51"><a href="#cb5-51"></a>        v <span class="op">=</span> v.repeat_interleave(<span class="va">self</span>.kv_per_head, dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-52"><a href="#cb5-52"></a></span>
+<span id="cb5-53"><a href="#cb5-53"></a>        scores <span class="op">=</span> torch.matmul(q, k.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="op">/</span> math.sqrt(<span class="va">self</span>.head_dim)</span>
+<span id="cb5-54"><a href="#cb5-54"></a>        scores <span class="op">=</span> scores.softmax(dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb5-55"><a href="#cb5-55"></a>        output <span class="op">=</span> torch.matmul(scores, v)</span>
+<span id="cb5-56"><a href="#cb5-56"></a>        output <span class="op">=</span> output.transpose(<span class="dv">1</span>, <span class="dv">2</span>).contiguous().view(batch_size, seq_len, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb5-57"><a href="#cb5-57"></a>        <span class="cf">return</span> <span class="va">self</span>.wo(output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="multi-head-latent-attention-mla" class="level2">
+<h2 class="anchored" data-anchor-id="multi-head-latent-attention-mla">Multi-Head Latent Attention (MLA)</h2>
+<p>In <strong>Multi-Head Latent Attention (MLA)</strong>, a key technique is the <strong>low-rank joint compression</strong> of the key and value matrices to significantly reduce memory usage in the key-value (KV) cache. This technique is particularly useful for long sequences, where the KV cache size could become a bottleneck.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/mla.png" class="img-fluid figure-img"></p>
+<figcaption>MLA</figcaption>
+</figure>
+</div>
+<section id="low-rank-key-value-compression" class="level4">
+<h4 class="anchored" data-anchor-id="low-rank-key-value-compression">1. Low-Rank Key-Value Compression</h4>
+<p>The MLA approach starts by compressing the keys and values jointly into a smaller latent space, reducing the memory requirement for storing them. The key operations are:</p>
+<ul>
+<li><p><strong>Down-Projection</strong>: The original key-value matrix <span class="math inline">\(h_t\)</span> (size <span class="math inline">\(d \times n_{\text{heads}}\)</span>) is projected down to a lower-dimensional latent space <span class="math inline">\(c_{KV_t}\)</span> (size <span class="math inline">\(d_c\)</span>) using the down-projection matrix <span class="math inline">\(W_{D_{KV}}\)</span>:</p>
+<p><span class="math display">\[
+c_{KV_t} = W_{D_{KV}} h_t
+\]</span></p>
+<p>Where <span class="math inline">\(W_{D_{KV}} \in \mathbb{R}^{d_c \times d}\)</span> is the down-projection matrix, and <span class="math inline">\(d_c\)</span> is the latent dimension, which is significantly smaller than the original dimensionality <span class="math inline">\(d_{\text{model}}\)</span>.</p></li>
+<li><p><strong>Up-Projection</strong>: After compression, the compressed keys and values are restored to their original dimensions for use in attention computation through the up-projection matrices <span class="math inline">\(W_{U_K}\)</span> for keys and <span class="math inline">\(W_{U_V}\)</span> for values:</p>
+<p><span class="math display">\[
+k_{C_t} = W_{U_K} c_{KV_t}, \quad v_{C_t} = W_{U_V} c_{KV_t}
+\]</span></p>
+<p>Here, <span class="math inline">\(W_{U_K} \in \mathbb{R}^{d_{\text{model}} \times d_c}\)</span> and <span class="math inline">\(W_{U_V} \in \mathbb{R}^{d_{\text{model}} \times d_c}\)</span> are the up-projection matrices for keys and values, respectively.</p></li>
+</ul>
+<p>The benefit of this low-rank joint compression is that it significantly reduces the memory footprint of the KV cache. Specifically, instead of storing the full-sized key and value matrices, we only store the compressed latent vectors <span class="math inline">\(c_{KV_t}\)</span>, which require much less space.</p>
+</section>
+<section id="key-value-cache-reduction" class="level4">
+<h4 class="anchored" data-anchor-id="key-value-cache-reduction">2. Key-Value Cache Reduction</h4>
+<p>During inference, the compressed vectors <span class="math inline">\(c_{KV_t}\)</span> are cached, significantly reducing the memory required for storing keys and values across layers. The total size of the KV cache is proportional to <span class="math inline">\(d_c\)</span> (the compressed latent dimension), which is much smaller than the original dimensionality.</p>
+<p>In practical terms, the KV cache has only <span class="math inline">\(d_c \times l\)</span> elements (where <span class="math inline">\(l\)</span> is the number of layers), instead of the full-size key-value matrices for each layer.</p>
+</section>
+<section id="query-compression" class="level4">
+<h4 class="anchored" data-anchor-id="query-compression">3. Query Compression</h4>
+<p>In addition to compressing the keys and values, MLA also compresses the queries to further reduce the activation memory during training. This compression is done through similar down-projection and up-projection steps:</p>
+<ul>
+<li><p><strong>Down-Projection of Queries</strong>: The queries <span class="math inline">\(h_t\)</span> are projected down into a smaller latent vector <span class="math inline">\(c_{Q_t}\)</span> using the down-projection matrix <span class="math inline">\(W_{D_Q}\)</span>:</p>
+<p><span class="math display">\[
+c_{Q_t} = W_{D_Q} h_t
+\]</span></p>
+<p>Where <span class="math inline">\(W_{D_Q} \in \mathbb{R}^{d'_c \times d}\)</span> is the down-projection matrix, and <span class="math inline">\(d'_c\)</span> is the query compression dimension.</p></li>
+<li><p><strong>Up-Projection of Queries</strong>: The compressed query <span class="math inline">\(c_{Q_t}\)</span> is restored to its original dimensions using the up-projection matrix <span class="math inline">\(W_{U_Q}\)</span>:</p>
+<p><span class="math display">\[
+q_{C_t} = W_{U_Q} c_{Q_t}
+\]</span></p>
+<p>Where <span class="math inline">\(W_{U_Q} \in \mathbb{R}^{d_{\text{model}} \times d'_c}\)</span> is the up-projection matrix for queries.</p></li>
+</ul>
+<p>This query compression reduces the memory needed for the query representations, helping to alleviate memory pressure during training.</p>
+</section>
+<section id="inference-optimization" class="level4">
+<h4 class="anchored" data-anchor-id="inference-optimization">4. Inference Optimization</h4>
+<p>During inference, additional optimizations are possible. Specifically, the up-projection matrices for keys <span class="math inline">\(W_{U_K}\)</span> and values <span class="math inline">\(W_{U_V}\)</span> can be absorbed into the projection matrices <span class="math inline">\(W_Q\)</span> and <span class="math inline">\(W_O\)</span>, respectively, for queries and outputs. This means that the keys and values do not need to be computed explicitly during inference, further reducing memory and computation costs.</p>
+</section>
+<section id="summary-of-mlas-key-components" class="level4">
+<h4 class="anchored" data-anchor-id="summary-of-mlas-key-components">Summary of MLA’s Key Components:</h4>
+<ul>
+<li><strong>Key-Value Compression</strong>: Low-rank joint compression reduces memory usage for keys and values in the KV cache.</li>
+<li><strong>Query Compression</strong>: Compresses queries to reduce activation memory during training.</li>
+<li><strong>Inference Optimizations</strong>: Absorption of up-projection matrices into the query and output projections eliminates the need for recomputing keys and values.</li>
+<li><strong>Reduced KV Cache Size</strong>: Only the compressed latent vectors <span class="math inline">\(c_{KV_t}\)</span> need to be cached, which significantly reduces memory usage.</li>
+</ul>
+</section>
+<section id="mathematical-notation-recap" class="level4">
+<h4 class="anchored" data-anchor-id="mathematical-notation-recap">Mathematical Notation Recap:</h4>
+<ul>
+<li><strong>Compressed Latent Vector for Keys and Values</strong>: <span class="math inline">\(c_{KV_t} = W_{D_{KV}} h_t\)</span></li>
+<li><strong>Up-Projection of Keys and Values</strong>: <span class="math inline">\(k_{C_t} = W_{U_K} c_{KV_t}, \quad v_{C_t} = W_{U_V} c_{KV_t}\)</span></li>
+<li><strong>Compressed Latent Vector for Queries</strong>: <span class="math inline">\(c_{Q_t} = W_{D_Q} h_t\)</span></li>
+<li><strong>Up-Projection of Queries</strong>: <span class="math inline">\(q_{C_t} = W_{U_Q} c_{Q_t}\)</span></li>
+</ul>
+<p>By reducing the size of the KV cache and compressing the queries, MLA offers substantial memory savings while maintaining the performance of attention mechanisms.</p>
+<p>There are two ways to implement MLA:</p>
+<ol type="1">
+<li>Decompress KV: decompress the key and value matrices to the original dimension before storing them in the cache</li>
+<li>Compress KV: compress the key and value matrices to a lower dimension and store them in the cache</li>
+</ol>
+<p><strong>Why would we want to decompress the key and value matrices to the original dimension?</strong></p>
+<p>Although decompressing the key and value matrices to the original dimension is memory inefficient, it’s generally faster to compute attention scores and apply them to the values. Vs in the compressed version we would have to recompute all the past key and value matrices from the compressed latent vectors before computing the attention scores.</p>
+<div id="cell-16" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">class</span> MultiHeadLatentAttentionDecompressKV(nn.Module):</span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb6-3"><a href="#cb6-3"></a>        <span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>, q_compression_dim: <span class="bu">int</span>, kv_compression_dim: <span class="bu">int</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>    ):</span>
+<span id="cb6-5"><a href="#cb6-5"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb6-6"><a href="#cb6-6"></a>        <span class="cf">assert</span> dim <span class="op">%</span> n_heads <span class="op">==</span> <span class="dv">0</span>, <span class="st">"dim must be divisible by n_heads"</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>        <span class="va">self</span>.dim <span class="op">=</span> dim</span>
+<span id="cb6-8"><a href="#cb6-8"></a>        <span class="va">self</span>.n_heads <span class="op">=</span> n_heads</span>
+<span id="cb6-9"><a href="#cb6-9"></a>        <span class="va">self</span>.head_dim <span class="op">=</span> dim <span class="op">//</span> n_heads</span>
+<span id="cb6-10"><a href="#cb6-10"></a>        <span class="va">self</span>.kv_compression_dim <span class="op">=</span> kv_compression_dim</span>
+<span id="cb6-11"><a href="#cb6-11"></a></span>
+<span id="cb6-12"><a href="#cb6-12"></a>        <span class="co"># Query compression weights</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>        <span class="co"># w_dq: Projects query from full dim to compressed dim (down projection)</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>        <span class="va">self</span>.w_dq <span class="op">=</span> nn.Linear(dim, q_compression_dim)</span>
+<span id="cb6-15"><a href="#cb6-15"></a>        <span class="co"># w_uq: Projects query back from compressed to full dim (up projection)</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>        <span class="va">self</span>.w_uq <span class="op">=</span> nn.Linear(q_compression_dim, dim)</span>
+<span id="cb6-17"><a href="#cb6-17"></a></span>
+<span id="cb6-18"><a href="#cb6-18"></a>        <span class="co"># Key-Value compression weights</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>        <span class="co"># w_dkv: Projects both key and value to shared compressed dim</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a>        <span class="va">self</span>.w_dkv <span class="op">=</span> nn.Linear(dim, kv_compression_dim)</span>
+<span id="cb6-21"><a href="#cb6-21"></a>        <span class="co"># w_uk, w_uv: Separate projections from compressed dim back to full dim</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>        <span class="va">self</span>.w_uk <span class="op">=</span> nn.Linear(kv_compression_dim, dim)</span>
+<span id="cb6-23"><a href="#cb6-23"></a>        <span class="va">self</span>.w_uv <span class="op">=</span> nn.Linear(kv_compression_dim, dim)</span>
+<span id="cb6-24"><a href="#cb6-24"></a></span>
+<span id="cb6-25"><a href="#cb6-25"></a>        <span class="co"># Final output projection</span></span>
+<span id="cb6-26"><a href="#cb6-26"></a>        <span class="va">self</span>.w_o <span class="op">=</span> nn.Linear(dim, dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-27"><a href="#cb6-27"></a></span>
+<span id="cb6-28"><a href="#cb6-28"></a>        <span class="co"># KV Cache buffers to store previous key/value pairs</span></span>
+<span id="cb6-29"><a href="#cb6-29"></a>        <span class="va">self</span>.register_buffer(</span>
+<span id="cb6-30"><a href="#cb6-30"></a>            <span class="st">"cache_k"</span>,</span>
+<span id="cb6-31"><a href="#cb6-31"></a>            torch.zeros(MAX_BATCH_SIZE, MAX_SEQ_LEN, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim),</span>
+<span id="cb6-32"><a href="#cb6-32"></a>        )</span>
+<span id="cb6-33"><a href="#cb6-33"></a>        <span class="va">self</span>.register_buffer(</span>
+<span id="cb6-34"><a href="#cb6-34"></a>            <span class="st">"cache_v"</span>,</span>
+<span id="cb6-35"><a href="#cb6-35"></a>            torch.zeros(MAX_BATCH_SIZE, MAX_SEQ_LEN, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim),</span>
+<span id="cb6-36"><a href="#cb6-36"></a>        )</span>
+<span id="cb6-37"><a href="#cb6-37"></a></span>
+<span id="cb6-38"><a href="#cb6-38"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor, start_pos: <span class="bu">int</span>):</span>
+<span id="cb6-39"><a href="#cb6-39"></a>        <span class="co"># Input shape: (batch_size, seq_len, dim)</span></span>
+<span id="cb6-40"><a href="#cb6-40"></a>        batch_size, seq_len, _ <span class="op">=</span> x.shape</span>
+<span id="cb6-41"><a href="#cb6-41"></a>        <span class="cf">assert</span> (</span>
+<span id="cb6-42"><a href="#cb6-42"></a>            seq_len <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a>        ), <span class="st">"Only single-step inference (seq_len=1) is supported for MLA."</span></span>
+<span id="cb6-44"><a href="#cb6-44"></a></span>
+<span id="cb6-45"><a href="#cb6-45"></a>        <span class="co"># Project to compressed q dimension: (batch_size, seq_len, q_compression_dim)</span></span>
+<span id="cb6-46"><a href="#cb6-46"></a>        c_q <span class="op">=</span> <span class="va">self</span>.w_dq(x)</span>
+<span id="cb6-47"><a href="#cb6-47"></a>        <span class="co"># Project back to full dimension: (batch_size, seq_len, dim)</span></span>
+<span id="cb6-48"><a href="#cb6-48"></a>        q <span class="op">=</span> <span class="va">self</span>.w_uq(c_q)</span>
+<span id="cb6-49"><a href="#cb6-49"></a></span>
+<span id="cb6-50"><a href="#cb6-50"></a>        <span class="co"># Project to compressed kv dimension: (batch_size, seq_len, kv_compression_dim)</span></span>
+<span id="cb6-51"><a href="#cb6-51"></a>        c_kv <span class="op">=</span> <span class="va">self</span>.w_dkv(x)</span>
+<span id="cb6-52"><a href="#cb6-52"></a></span>
+<span id="cb6-53"><a href="#cb6-53"></a>        <span class="co"># Project back to full dimension: (batch_size, seq_len, dim)</span></span>
+<span id="cb6-54"><a href="#cb6-54"></a>        k <span class="op">=</span> <span class="va">self</span>.w_uk(c_kv)</span>
+<span id="cb6-55"><a href="#cb6-55"></a>        v <span class="op">=</span> <span class="va">self</span>.w_uv(c_kv)</span>
+<span id="cb6-56"><a href="#cb6-56"></a></span>
+<span id="cb6-57"><a href="#cb6-57"></a>        <span class="co"># Reshape to split dim into n_heads and head_dim</span></span>
+<span id="cb6-58"><a href="#cb6-58"></a>        <span class="co"># q shape: (batch_size, seq_len, n_heads, head_dim)</span></span>
+<span id="cb6-59"><a href="#cb6-59"></a>        q <span class="op">=</span> q.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb6-60"><a href="#cb6-60"></a>        k <span class="op">=</span> k.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb6-61"><a href="#cb6-61"></a>        v <span class="op">=</span> v.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim)</span>
+<span id="cb6-62"><a href="#cb6-62"></a></span>
+<span id="cb6-63"><a href="#cb6-63"></a>        <span class="co"># Cache k,v for current position</span></span>
+<span id="cb6-64"><a href="#cb6-64"></a>        <span class="va">self</span>.cache_k[:batch_size, start_pos : start_pos <span class="op">+</span> seq_len, :, :] <span class="op">=</span> k</span>
+<span id="cb6-65"><a href="#cb6-65"></a>        <span class="va">self</span>.cache_v[:batch_size, start_pos : start_pos <span class="op">+</span> seq_len, :, :] <span class="op">=</span> v</span>
+<span id="cb6-66"><a href="#cb6-66"></a></span>
+<span id="cb6-67"><a href="#cb6-67"></a>        <span class="co"># Get cached k,v up to current position</span></span>
+<span id="cb6-68"><a href="#cb6-68"></a>        k <span class="op">=</span> <span class="va">self</span>.cache_k[:batch_size, : start_pos <span class="op">+</span> seq_len, :, :]</span>
+<span id="cb6-69"><a href="#cb6-69"></a>        v <span class="op">=</span> <span class="va">self</span>.cache_v[:batch_size, : start_pos <span class="op">+</span> seq_len, :, :]</span>
+<span id="cb6-70"><a href="#cb6-70"></a></span>
+<span id="cb6-71"><a href="#cb6-71"></a>        <span class="co"># Transpose to get shape (batch_size, n_heads, seq_len, head_dim)</span></span>
+<span id="cb6-72"><a href="#cb6-72"></a>        q <span class="op">=</span> q.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-73"><a href="#cb6-73"></a>        k <span class="op">=</span> k.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-74"><a href="#cb6-74"></a>        v <span class="op">=</span> v.transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-75"><a href="#cb6-75"></a></span>
+<span id="cb6-76"><a href="#cb6-76"></a>        <span class="co"># Compute attention scores: (batch_size, n_heads, seq_len, seq_len)</span></span>
+<span id="cb6-77"><a href="#cb6-77"></a>        scores <span class="op">=</span> torch.matmul(q, k.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="op">/</span> math.sqrt(<span class="va">self</span>.head_dim)</span>
+<span id="cb6-78"><a href="#cb6-78"></a>        attention <span class="op">=</span> F.softmax(scores, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb6-79"><a href="#cb6-79"></a></span>
+<span id="cb6-80"><a href="#cb6-80"></a>        <span class="co"># Apply attention: (batch_size, n_heads, seq_len, head_dim)</span></span>
+<span id="cb6-81"><a href="#cb6-81"></a>        context <span class="op">=</span> torch.matmul(attention, v)</span>
+<span id="cb6-82"><a href="#cb6-82"></a></span>
+<span id="cb6-83"><a href="#cb6-83"></a>        <span class="co"># Reshape back to (batch_size, seq_len, dim)</span></span>
+<span id="cb6-84"><a href="#cb6-84"></a>        context <span class="op">=</span> context.transpose(<span class="dv">1</span>, <span class="dv">2</span>).contiguous().view(batch_size, seq_len, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb6-85"><a href="#cb6-85"></a>        output <span class="op">=</span> <span class="va">self</span>.w_o(context)</span>
+<span id="cb6-86"><a href="#cb6-86"></a></span>
+<span id="cb6-87"><a href="#cb6-87"></a>        <span class="cf">return</span> output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-17" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">class</span> MultiHeadLatentAttentionCompressKV(nn.Module):</span>
+<span id="cb7-2"><a href="#cb7-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb7-3"><a href="#cb7-3"></a>        <span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>, q_compression_dim: <span class="bu">int</span>, kv_compression_dim: <span class="bu">int</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>    ):</span>
+<span id="cb7-5"><a href="#cb7-5"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb7-6"><a href="#cb7-6"></a>        <span class="cf">assert</span> dim <span class="op">%</span> n_heads <span class="op">==</span> <span class="dv">0</span>, <span class="st">"dim must be divisible by n_heads"</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>        <span class="va">self</span>.dim <span class="op">=</span> dim</span>
+<span id="cb7-8"><a href="#cb7-8"></a>        <span class="va">self</span>.n_heads <span class="op">=</span> n_heads</span>
+<span id="cb7-9"><a href="#cb7-9"></a>        <span class="va">self</span>.head_dim <span class="op">=</span> dim <span class="op">//</span> n_heads</span>
+<span id="cb7-10"><a href="#cb7-10"></a>        <span class="va">self</span>.kv_compression_dim <span class="op">=</span> kv_compression_dim</span>
+<span id="cb7-11"><a href="#cb7-11"></a></span>
+<span id="cb7-12"><a href="#cb7-12"></a>        <span class="co"># Down-project query from dim to compressed dimension</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a>        <span class="va">self</span>.w_dq <span class="op">=</span> nn.Linear(dim, q_compression_dim)</span>
+<span id="cb7-14"><a href="#cb7-14"></a>        <span class="co"># Up-project query back to original dimension</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a>        <span class="va">self</span>.w_uq <span class="op">=</span> nn.Linear(q_compression_dim, dim)</span>
+<span id="cb7-16"><a href="#cb7-16"></a></span>
+<span id="cb7-17"><a href="#cb7-17"></a>        <span class="co"># Down-project key-value to shared compressed dimension</span></span>
+<span id="cb7-18"><a href="#cb7-18"></a>        <span class="va">self</span>.w_dkv <span class="op">=</span> nn.Linear(dim, kv_compression_dim)</span>
+<span id="cb7-19"><a href="#cb7-19"></a>        <span class="co"># Separate up-projections for key and value back to original dimension</span></span>
+<span id="cb7-20"><a href="#cb7-20"></a>        <span class="va">self</span>.w_uk <span class="op">=</span> nn.Linear(kv_compression_dim, dim)</span>
+<span id="cb7-21"><a href="#cb7-21"></a>        <span class="va">self</span>.w_uv <span class="op">=</span> nn.Linear(kv_compression_dim, dim)</span>
+<span id="cb7-22"><a href="#cb7-22"></a></span>
+<span id="cb7-23"><a href="#cb7-23"></a>        <span class="co"># Final output projection</span></span>
+<span id="cb7-24"><a href="#cb7-24"></a>        <span class="va">self</span>.w_o <span class="op">=</span> nn.Linear(dim, dim, bias<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb7-25"><a href="#cb7-25"></a></span>
+<span id="cb7-26"><a href="#cb7-26"></a>        <span class="co"># Cache for storing compressed key-value pairs during generation</span></span>
+<span id="cb7-27"><a href="#cb7-27"></a>        <span class="va">self</span>.register_buffer(</span>
+<span id="cb7-28"><a href="#cb7-28"></a>            <span class="st">"cache_kv"</span>, torch.zeros(MAX_BATCH_SIZE, MAX_SEQ_LEN, kv_compression_dim)</span>
+<span id="cb7-29"><a href="#cb7-29"></a>        )</span>
+<span id="cb7-30"><a href="#cb7-30"></a></span>
+<span id="cb7-31"><a href="#cb7-31"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor, start_pos: <span class="bu">int</span>):</span>
+<span id="cb7-32"><a href="#cb7-32"></a>        batch_size, seq_len, _ <span class="op">=</span> x.shape</span>
+<span id="cb7-33"><a href="#cb7-33"></a>        <span class="cf">assert</span> (</span>
+<span id="cb7-34"><a href="#cb7-34"></a>            seq_len <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb7-35"><a href="#cb7-35"></a>        ), <span class="st">"Only single-step inference (seq_len=1) is supported for MLA."</span></span>
+<span id="cb7-36"><a href="#cb7-36"></a></span>
+<span id="cb7-37"><a href="#cb7-37"></a>        <span class="co"># Project to compressed q dimension: (batch_size, seq_len, q_compression_dim)</span></span>
+<span id="cb7-38"><a href="#cb7-38"></a>        c_q <span class="op">=</span> <span class="va">self</span>.w_dq(x)</span>
+<span id="cb7-39"><a href="#cb7-39"></a>        <span class="co"># Project back to full dimension: (batch_size, seq_len, dim)</span></span>
+<span id="cb7-40"><a href="#cb7-40"></a>        q <span class="op">=</span> <span class="va">self</span>.w_uq(c_q)</span>
+<span id="cb7-41"><a href="#cb7-41"></a></span>
+<span id="cb7-42"><a href="#cb7-42"></a>        <span class="co"># Project to compressed kv dimension: (batch_size, seq_len, kv_compression_dim)</span></span>
+<span id="cb7-43"><a href="#cb7-43"></a>        c_kv <span class="op">=</span> <span class="va">self</span>.w_dkv(x)</span>
+<span id="cb7-44"><a href="#cb7-44"></a></span>
+<span id="cb7-45"><a href="#cb7-45"></a>        <span class="co"># Cache compressed kv for current position</span></span>
+<span id="cb7-46"><a href="#cb7-46"></a>        <span class="va">self</span>.cache_kv[:batch_size, start_pos : start_pos <span class="op">+</span> seq_len, :] <span class="op">=</span> c_kv</span>
+<span id="cb7-47"><a href="#cb7-47"></a></span>
+<span id="cb7-48"><a href="#cb7-48"></a>        <span class="co"># Retrieve cached kv up to current position</span></span>
+<span id="cb7-49"><a href="#cb7-49"></a>        cached_kv <span class="op">=</span> <span class="va">self</span>.cache_kv[:batch_size, : start_pos <span class="op">+</span> seq_len, :]</span>
+<span id="cb7-50"><a href="#cb7-50"></a></span>
+<span id="cb7-51"><a href="#cb7-51"></a>        <span class="co"># Project back to full dimension: (batch_size, seq_len, dim)</span></span>
+<span id="cb7-52"><a href="#cb7-52"></a>        k <span class="op">=</span> <span class="va">self</span>.w_uk(cached_kv)</span>
+<span id="cb7-53"><a href="#cb7-53"></a>        v <span class="op">=</span> <span class="va">self</span>.w_uv(cached_kv)</span>
+<span id="cb7-54"><a href="#cb7-54"></a></span>
+<span id="cb7-55"><a href="#cb7-55"></a>        <span class="co"># Reshape to get shape (batch_size, n_heads, seq_len, head_dim)</span></span>
+<span id="cb7-56"><a href="#cb7-56"></a>        q <span class="op">=</span> q.view(batch_size, seq_len, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb7-57"><a href="#cb7-57"></a>        <span class="co"># seq_len is not the same as the seq_len of the input which is 1, it is the seq_len of the cached kv</span></span>
+<span id="cb7-58"><a href="#cb7-58"></a>        <span class="co"># hence we need to view it with -1 to get the correct shape</span></span>
+<span id="cb7-59"><a href="#cb7-59"></a>        k <span class="op">=</span> k.view(batch_size, <span class="op">-</span><span class="dv">1</span>, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb7-60"><a href="#cb7-60"></a>        v <span class="op">=</span> v.view(batch_size, <span class="op">-</span><span class="dv">1</span>, <span class="va">self</span>.n_heads, <span class="va">self</span>.head_dim).transpose(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb7-61"><a href="#cb7-61"></a></span>
+<span id="cb7-62"><a href="#cb7-62"></a>        scores <span class="op">=</span> torch.matmul(q, k.transpose(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="op">/</span> math.sqrt(<span class="va">self</span>.head_dim)</span>
+<span id="cb7-63"><a href="#cb7-63"></a>        attention <span class="op">=</span> F.softmax(scores, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb7-64"><a href="#cb7-64"></a></span>
+<span id="cb7-65"><a href="#cb7-65"></a>        context <span class="op">=</span> torch.matmul(attention, v)</span>
+<span id="cb7-66"><a href="#cb7-66"></a></span>
+<span id="cb7-67"><a href="#cb7-67"></a>        context <span class="op">=</span> context.transpose(<span class="dv">1</span>, <span class="dv">2</span>).contiguous().view(batch_size, seq_len, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb7-68"><a href="#cb7-68"></a>        output <span class="op">=</span> <span class="va">self</span>.w_o(context)</span>
+<span id="cb7-69"><a href="#cb7-69"></a></span>
+<span id="cb7-70"><a href="#cb7-70"></a>        <span class="cf">return</span> output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="memory-usage-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="memory-usage-comparison">Memory Usage Comparison</h2>
+<section id="memory-usage-in-multi-head-attention" class="level4">
+<h4 class="anchored" data-anchor-id="memory-usage-in-multi-head-attention">1. Memory Usage in Multi-Head Attention</h4>
+<p>In Multi-Head Attention (MHA), for each query, separate key-value heads are used. This means for each query head, there is a corresponding set of keys and values. The size of the key and value matrices increases with the number of heads, leading to higher memory requirements.</p>
+<p>For an input sequence of length <span class="math inline">\(T\)</span>, model dimension <span class="math inline">\(d_{\text{model}}\)</span>, and number of attention heads <span class="math inline">\(n_{\text{heads}}\)</span>, the memory required for storing keys and values is proportional to:</p>
+<p><span class="math display">\[
+\text{Memory}_{\text{keys/values}} = T \times d_k \times n_{\text{heads}}
+\]</span></p>
+<p>where <span class="math inline">\(d_k = \frac{d_{\text{model}}}{n_{\text{heads}}}\)</span> is the dimension of each head.</p>
+<p><strong>Key and Value Memory:</strong></p>
+<p>In MHA, each query head has its own unique key and value projections, so the memory for storing keys and values grows with <span class="math inline">\(n_{\text{heads}}\)</span>, the number of heads.</p>
+</section>
+<section id="memory-usage-in-group-query-attention" class="level4">
+<h4 class="anchored" data-anchor-id="memory-usage-in-group-query-attention">2. Memory Usage in Group Query Attention</h4>
+<p>In Group Query Attention, multiple query heads share the same key and value heads, significantly reducing the number of unique key-value matrices stored in memory. This grouping reduces the total memory needed to store the keys and values, as multiple query heads attend to the same key and value matrices.</p>
+<p>The key-value heads are shared across query heads, and the number of key-value heads is determined by <span class="math inline">\(n_{\text{kv\_heads}}\)</span>. The memory for storing keys and values is now:</p>
+<p><span class="math display">\[
+\text{Memory}_{\text{keys/values}} = T \times d_k \times n_{\text{kv\_heads}}
+\]</span></p>
+<p>Here, <span class="math inline">\(d_k\)</span> is the dimensionality of each key-value pair, and the memory required depends only on <span class="math inline">\(n_{\text{kv\_heads}}\)</span>, which is usually much smaller than the total number of heads in MHA.</p>
+<p><strong>Key and Value Memory Reduction:</strong></p>
+<p>Since the keys and values are repeated across multiple query heads, this leads to a reduction in memory usage. Specifically, the number of key-value heads <span class="math inline">\(n_{\text{kv\_heads}}\)</span> is much smaller than the total number of heads <span class="math inline">\(n_{\text{heads}}\)</span> in MHA, leading to lower memory usage.</p>
+</section>
+<section id="memory-usage-in-multi-query-attention-a-variation-of-group-query-attention" class="level4">
+<h4 class="anchored" data-anchor-id="memory-usage-in-multi-query-attention-a-variation-of-group-query-attention">3. Memory Usage in Multi-Query Attention (a Variation of Group Query Attention)</h4>
+<p>Multi-Query Attention is a variation of Group Query Attention where all query heads attend to the same set of key-value heads. Instead of having multiple key-value heads, all query heads in Multi-Query Attention use the same set of keys and values. This leads to the most significant memory reduction, as there is only a single key-value matrix shared across all query heads.</p>
+<p>In Multi-Query Attention, the number of key-value heads <span class="math inline">\(n_{\text{kv\_heads}}\)</span> is equal to 1, as all query heads attend to the same key and value:</p>
+<p><span class="math display">\[
+\text{Memory}_{\text{keys/values}} = T \times d_k \times 1
+\]</span></p>
+<p>In this case, there is only one key-value matrix to store, which drastically reduces memory usage compared to both MHA and Group Query Attention.</p>
+</section>
+<section id="memory-usage-in-multi-head-latent-attention-mla" class="level4">
+<h4 class="anchored" data-anchor-id="memory-usage-in-multi-head-latent-attention-mla">4. Memory Usage in Multi-Head Latent Attention (MLA)</h4>
+<p>Multi-Head Latent Attention (MLA) introduces an additional technique to further reduce memory usage by compressing the key and value matrices into a lower-dimensional latent space. This low-rank joint compression of keys and values helps in reducing the size of the key-value cache while maintaining the ability to compute attention effectively.</p>
+<p>In MLA, the key-value matrices are compressed into a latent space of dimension <span class="math inline">\(d_c\)</span>, where <span class="math inline">\(d_c\)</span> is much smaller than the original dimension <span class="math inline">\(d_{\text{model}}\)</span>. The memory for storing compressed key-value matrices is proportional to:</p>
+<p><span class="math display">\[
+\text{Memory}_{\text{keys/values}} = T \times d_c
+\]</span></p>
+</section>
+<section id="memory-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="memory-comparison">Memory Comparison</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 42%">
+<col style="width: 57%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attention Mechanism</th>
+<th>Memory Usage for Keys/Values</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Multi-Head Attention</td>
+<td><span class="math inline">\(2 \times T \times d_k \times n_{\text{heads}}\)</span></td>
+</tr>
+<tr class="even">
+<td>Group Query Attention</td>
+<td><span class="math inline">\(2 \times T \times d_k \times n_{\text{kv\_heads}}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Multi-Query Attention</td>
+<td><span class="math inline">\(2 \times T \times d_k \times 1\)</span></td>
+</tr>
+<tr class="even">
+<td>Multi-Head Latent Attention</td>
+<td><span class="math inline">\(2 \times T \times d_c\)</span></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-19" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">def</span> generate(</span>
+<span id="cb8-2"><a href="#cb8-2"></a>    model: nn.Module,</span>
+<span id="cb8-3"><a href="#cb8-3"></a>    input_tokens: torch.Tensor,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>    max_length: <span class="bu">int</span> <span class="op">=</span> <span class="dv">100</span>,</span>
+<span id="cb8-5"><a href="#cb8-5"></a>    use_kv_cache: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb8-6"><a href="#cb8-6"></a>) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb8-7"><a href="#cb8-7"></a>    <span class="co">"""Generate a sequence of tokens using an autoregressive model.</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">    This function performs autoregressive generation by repeatedly feeding the model's output</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">    back as input to generate a sequence of tokens up to max_length.</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">    Args:</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">        model (nn.Module): The neural network model used for generation. Should accept input</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">            tokens and return logits for next token prediction.</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">        input_tokens (torch.Tensor): Initial input sequence of shape (batch_size, seq_len, dim).</span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">            This serves as the prompt/context for generation.</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">        max_length (int, optional): Maximum number of new tokens to generate. Defaults to 100.</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="co">        use_kv_cache (bool, optional): Whether to use key-value caching during generation.</span></span>
+<span id="cb8-19"><a href="#cb8-19"></a><span class="co">            If True, expects model to accept start_pos parameter and maintain its own cache.</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a><span class="co">            If False, recomputes attention over full sequence each step. Defaults to False.</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">    Returns:</span></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="co">        torch.Tensor: Generated sequence of shape (batch_size, seq_len + max_length, dim),</span></span>
+<span id="cb8-24"><a href="#cb8-24"></a><span class="co">            containing the input tokens followed by max_length generated tokens.</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a></span>
+<span id="cb8-26"><a href="#cb8-26"></a><span class="co">    Note:</span></span>
+<span id="cb8-27"><a href="#cb8-27"></a><span class="co">        - When use_kv_cache=True, the model should implement caching of key-value pairs</span></span>
+<span id="cb8-28"><a href="#cb8-28"></a><span class="co">          to avoid recomputing attention over the entire sequence each generation step.</span></span>
+<span id="cb8-29"><a href="#cb8-29"></a><span class="co">        - The model should output logits of shape (batch_size, seq_len, dim) where dim</span></span>
+<span id="cb8-30"><a href="#cb8-30"></a><span class="co">          matches the input token dimension.</span></span>
+<span id="cb8-31"><a href="#cb8-31"></a></span>
+<span id="cb8-32"><a href="#cb8-32"></a><span class="co">    This function is not a correct implementation of autoregressive generation,</span></span>
+<span id="cb8-33"><a href="#cb8-33"></a><span class="co">    it is just a simple implementation to test the attention mechanisms</span></span>
+<span id="cb8-34"><a href="#cb8-34"></a><span class="co">    """</span></span>
+<span id="cb8-35"><a href="#cb8-35"></a>    generated <span class="op">=</span> input_tokens</span>
+<span id="cb8-36"><a href="#cb8-36"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(max_length):</span>
+<span id="cb8-37"><a href="#cb8-37"></a>        <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb8-38"><a href="#cb8-38"></a>            <span class="cf">if</span> use_kv_cache:</span>
+<span id="cb8-39"><a href="#cb8-39"></a>                next_token_logits <span class="op">=</span> model(generated[:, i : i <span class="op">+</span> <span class="dv">1</span>], start_pos<span class="op">=</span>i)</span>
+<span id="cb8-40"><a href="#cb8-40"></a>            <span class="cf">else</span>:</span>
+<span id="cb8-41"><a href="#cb8-41"></a>                next_token_logits <span class="op">=</span> model(generated)</span>
+<span id="cb8-42"><a href="#cb8-42"></a>        next_token <span class="op">=</span> next_token_logits[:, <span class="op">-</span><span class="dv">1</span>:, :]</span>
+<span id="cb8-43"><a href="#cb8-43"></a>        generated <span class="op">=</span> torch.cat([generated, next_token], dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-44"><a href="#cb8-44"></a></span>
+<span id="cb8-45"><a href="#cb8-45"></a>    <span class="cf">return</span> generated</span>
+<span id="cb8-46"><a href="#cb8-46"></a></span>
+<span id="cb8-47"><a href="#cb8-47"></a></span>
+<span id="cb8-48"><a href="#cb8-48"></a><span class="co"># Function to profile a model</span></span>
+<span id="cb8-49"><a href="#cb8-49"></a><span class="kw">def</span> profile_model(</span>
+<span id="cb8-50"><a href="#cb8-50"></a>    model: nn.Module,</span>
+<span id="cb8-51"><a href="#cb8-51"></a>    input_seq: torch.Tensor,</span>
+<span id="cb8-52"><a href="#cb8-52"></a>    n_runs: <span class="bu">int</span>,</span>
+<span id="cb8-53"><a href="#cb8-53"></a>    max_length: <span class="bu">int</span> <span class="op">=</span> <span class="dv">64</span>,</span>
+<span id="cb8-54"><a href="#cb8-54"></a>    use_kv_cache: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb8-55"><a href="#cb8-55"></a>    device: torch.device <span class="op">=</span> torch.device(<span class="st">"cpu"</span>),</span>
+<span id="cb8-56"><a href="#cb8-56"></a>    <span class="op">**</span>kwargs</span>
+<span id="cb8-57"><a href="#cb8-57"></a>):</span>
+<span id="cb8-58"><a href="#cb8-58"></a>    <span class="co">"""</span></span>
+<span id="cb8-59"><a href="#cb8-59"></a><span class="co">    Profile a model's performance and memory usage.</span></span>
+<span id="cb8-60"><a href="#cb8-60"></a><span class="co">    """</span></span>
+<span id="cb8-61"><a href="#cb8-61"></a></span>
+<span id="cb8-62"><a href="#cb8-62"></a>    total_time <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-63"><a href="#cb8-63"></a>    total_tokens <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-64"><a href="#cb8-64"></a></span>
+<span id="cb8-65"><a href="#cb8-65"></a>    <span class="cf">with</span> profile(</span>
+<span id="cb8-66"><a href="#cb8-66"></a>        record_shapes<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb8-67"><a href="#cb8-67"></a>        profile_memory<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-68"><a href="#cb8-68"></a>        with_flops<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-69"><a href="#cb8-69"></a>        activities<span class="op">=</span>[ProfilerActivity.CPU, ProfilerActivity.CUDA],</span>
+<span id="cb8-70"><a href="#cb8-70"></a>    ) <span class="im">as</span> prof:</span>
+<span id="cb8-71"><a href="#cb8-71"></a>        m_obj <span class="op">=</span> model(<span class="op">**</span>kwargs).to(device)</span>
+<span id="cb8-72"><a href="#cb8-72"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_runs):</span>
+<span id="cb8-73"><a href="#cb8-73"></a>            start_time <span class="op">=</span> time.time()</span>
+<span id="cb8-74"><a href="#cb8-74"></a>            _ <span class="op">=</span> generate(</span>
+<span id="cb8-75"><a href="#cb8-75"></a>                m_obj, input_seq, max_length<span class="op">=</span>max_length, use_kv_cache<span class="op">=</span>use_kv_cache</span>
+<span id="cb8-76"><a href="#cb8-76"></a>            )</span>
+<span id="cb8-77"><a href="#cb8-77"></a>            end_time <span class="op">=</span> time.time()</span>
+<span id="cb8-78"><a href="#cb8-78"></a></span>
+<span id="cb8-79"><a href="#cb8-79"></a>            total_time <span class="op">+=</span> end_time <span class="op">-</span> start_time  <span class="co"># Accumulate time in seconds</span></span>
+<span id="cb8-80"><a href="#cb8-80"></a>            total_tokens <span class="op">+=</span> max_length  <span class="co"># Accumulate tokens generated</span></span>
+<span id="cb8-81"><a href="#cb8-81"></a></span>
+<span id="cb8-82"><a href="#cb8-82"></a>    parameters <span class="op">=</span> <span class="bu">sum</span>(p.numel() <span class="cf">for</span> p <span class="kw">in</span> m_obj.parameters())</span>
+<span id="cb8-83"><a href="#cb8-83"></a>    <span class="co"># Compute tokens/sec</span></span>
+<span id="cb8-84"><a href="#cb8-84"></a>    tokens_per_sec <span class="op">=</span> total_tokens <span class="op">/</span> total_time <span class="cf">if</span> total_time <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb8-85"><a href="#cb8-85"></a></span>
+<span id="cb8-86"><a href="#cb8-86"></a>    key_averages <span class="op">=</span> prof.key_averages()</span>
+<span id="cb8-87"><a href="#cb8-87"></a></span>
+<span id="cb8-88"><a href="#cb8-88"></a>    total_cpu_time <span class="op">=</span> (</span>
+<span id="cb8-89"><a href="#cb8-89"></a>        <span class="bu">sum</span>(</span>
+<span id="cb8-90"><a href="#cb8-90"></a>            item.self_cpu_time_total</span>
+<span id="cb8-91"><a href="#cb8-91"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
+<span id="cb8-92"><a href="#cb8-92"></a>            <span class="cf">if</span> item.self_cpu_time_total <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
+<span id="cb8-93"><a href="#cb8-93"></a>        )</span>
+<span id="cb8-94"><a href="#cb8-94"></a>        <span class="op">/</span> <span class="fl">1e6</span>  <span class="co"># Convert ns to s</span></span>
+<span id="cb8-95"><a href="#cb8-95"></a>    )</span>
+<span id="cb8-96"><a href="#cb8-96"></a>    total_cpu_memory <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb8-97"><a href="#cb8-97"></a>        item.cpu_memory_usage</span>
+<span id="cb8-98"><a href="#cb8-98"></a>        <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
+<span id="cb8-99"><a href="#cb8-99"></a>        <span class="cf">if</span> item.cpu_memory_usage <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
+<span id="cb8-100"><a href="#cb8-100"></a>    ) <span class="op">/</span> (</span>
+<span id="cb8-101"><a href="#cb8-101"></a>        <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span></span>
+<span id="cb8-102"><a href="#cb8-102"></a>    )  <span class="co"># Convert bytes to MB</span></span>
+<span id="cb8-103"><a href="#cb8-103"></a>    total_gpu_time <span class="op">=</span> (</span>
+<span id="cb8-104"><a href="#cb8-104"></a>        <span class="bu">sum</span>(</span>
+<span id="cb8-105"><a href="#cb8-105"></a>            item.self_device_time_total</span>
+<span id="cb8-106"><a href="#cb8-106"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
+<span id="cb8-107"><a href="#cb8-107"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"self_device_time_total"</span>)</span>
+<span id="cb8-108"><a href="#cb8-108"></a>            <span class="kw">and</span> item.self_device_time_total <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
+<span id="cb8-109"><a href="#cb8-109"></a>        )</span>
+<span id="cb8-110"><a href="#cb8-110"></a>        <span class="op">/</span> <span class="fl">1e6</span>  <span class="co"># Convert ns to s</span></span>
+<span id="cb8-111"><a href="#cb8-111"></a>    ) <span class="kw">or</span> (</span>
+<span id="cb8-112"><a href="#cb8-112"></a>        <span class="bu">sum</span>(</span>
+<span id="cb8-113"><a href="#cb8-113"></a>            item.self_cuda_time_total</span>
+<span id="cb8-114"><a href="#cb8-114"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
+<span id="cb8-115"><a href="#cb8-115"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"self_cuda_time_total"</span>)</span>
+<span id="cb8-116"><a href="#cb8-116"></a>            <span class="kw">and</span> item.self_cuda_time_total <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
+<span id="cb8-117"><a href="#cb8-117"></a>        )</span>
+<span id="cb8-118"><a href="#cb8-118"></a>        <span class="op">/</span> <span class="fl">1e6</span>  <span class="co"># Convert ns to s</span></span>
+<span id="cb8-119"><a href="#cb8-119"></a>    )</span>
+<span id="cb8-120"><a href="#cb8-120"></a>    total_gpu_memory <span class="op">=</span> (</span>
+<span id="cb8-121"><a href="#cb8-121"></a>        <span class="bu">sum</span>(</span>
+<span id="cb8-122"><a href="#cb8-122"></a>            item.cuda_memory_usage</span>
+<span id="cb8-123"><a href="#cb8-123"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
+<span id="cb8-124"><a href="#cb8-124"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"cuda_memory_usage"</span>) <span class="kw">and</span> item.cuda_memory_usage <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
+<span id="cb8-125"><a href="#cb8-125"></a>        )</span>
+<span id="cb8-126"><a href="#cb8-126"></a>        <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)  <span class="co"># Convert bytes to MB</span></span>
+<span id="cb8-127"><a href="#cb8-127"></a>    ) <span class="kw">or</span> (</span>
+<span id="cb8-128"><a href="#cb8-128"></a>        <span class="bu">sum</span>(</span>
+<span id="cb8-129"><a href="#cb8-129"></a>            item.cuda_memory_usage</span>
+<span id="cb8-130"><a href="#cb8-130"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
+<span id="cb8-131"><a href="#cb8-131"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"self_cuda_memory_usage"</span>)</span>
+<span id="cb8-132"><a href="#cb8-132"></a>            <span class="kw">and</span> item.cuda_memory_usage <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
+<span id="cb8-133"><a href="#cb8-133"></a>        )</span>
+<span id="cb8-134"><a href="#cb8-134"></a>        <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)  <span class="co"># Convert bytes to MB</span></span>
+<span id="cb8-135"><a href="#cb8-135"></a>    )</span>
+<span id="cb8-136"><a href="#cb8-136"></a>    flops <span class="op">=</span> (</span>
+<span id="cb8-137"><a href="#cb8-137"></a>        <span class="bu">sum</span>(</span>
+<span id="cb8-138"><a href="#cb8-138"></a>            item.flops</span>
+<span id="cb8-139"><a href="#cb8-139"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
+<span id="cb8-140"><a href="#cb8-140"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"flops"</span>) <span class="kw">and</span> item.flops <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
+<span id="cb8-141"><a href="#cb8-141"></a>        )</span>
+<span id="cb8-142"><a href="#cb8-142"></a>        <span class="op">/</span> <span class="fl">1e9</span>  <span class="co"># Convert flops to GFLOPS</span></span>
+<span id="cb8-143"><a href="#cb8-143"></a>    )</span>
+<span id="cb8-144"><a href="#cb8-144"></a></span>
+<span id="cb8-145"><a href="#cb8-145"></a>    <span class="cf">return</span> (</span>
+<span id="cb8-146"><a href="#cb8-146"></a>        total_cpu_time,</span>
+<span id="cb8-147"><a href="#cb8-147"></a>        total_cpu_memory,</span>
+<span id="cb8-148"><a href="#cb8-148"></a>        total_gpu_memory,</span>
+<span id="cb8-149"><a href="#cb8-149"></a>        total_gpu_time,</span>
+<span id="cb8-150"><a href="#cb8-150"></a>        flops,</span>
+<span id="cb8-151"><a href="#cb8-151"></a>        tokens_per_sec,</span>
+<span id="cb8-152"><a href="#cb8-152"></a>        parameters,</span>
+<span id="cb8-153"><a href="#cb8-153"></a>    )</span>
+<span id="cb8-154"><a href="#cb8-154"></a></span>
+<span id="cb8-155"><a href="#cb8-155"></a></span>
+<span id="cb8-156"><a href="#cb8-156"></a><span class="co"># get number of parameters</span></span>
+<span id="cb8-157"><a href="#cb8-157"></a><span class="kw">def</span> get_num_params(model: nn.Module) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb8-158"><a href="#cb8-158"></a>    <span class="cf">return</span> <span class="bu">sum</span>(p.numel() <span class="cf">for</span> p <span class="kw">in</span> model.parameters())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-20" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Main evaluation loop</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>batch_size <span class="op">=</span> MAX_BATCH_SIZE <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>seq_len <span class="op">=</span> MAX_SEQ_LEN <span class="op">//</span> <span class="dv">4</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>max_length <span class="op">=</span> MAX_SEQ_LEN <span class="op">//</span> <span class="dv">2</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>dim <span class="op">=</span> <span class="dv">2048</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>n_heads <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a>device <span class="op">=</span> torch.device(<span class="st">"cpu"</span>) <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> torch.device(<span class="st">"cuda"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8"></a></span>
+<span id="cb9-9"><a href="#cb9-9"></a>input_seq <span class="op">=</span> torch.randn(batch_size, seq_len, dim).to(device)</span>
+<span id="cb9-10"><a href="#cb9-10"></a>n_runs <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a></span>
+<span id="cb9-12"><a href="#cb9-12"></a>models <span class="op">=</span> {</span>
+<span id="cb9-13"><a href="#cb9-13"></a>    <span class="co"># "MHA": (MultiHeadAttention, False, {"dim": dim, "n_heads": n_heads}),</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a>    <span class="st">"MHA KV Cache"</span>: (MultiHeadAttentionKVCache, <span class="va">True</span>, {<span class="st">"dim"</span>: dim, <span class="st">"n_heads"</span>: n_heads}),</span>
+<span id="cb9-15"><a href="#cb9-15"></a>    <span class="st">"GQA KV Cache"</span>: (</span>
+<span id="cb9-16"><a href="#cb9-16"></a>        GroupQueryAttentionKVCache,</span>
+<span id="cb9-17"><a href="#cb9-17"></a>        <span class="va">True</span>,</span>
+<span id="cb9-18"><a href="#cb9-18"></a>        {<span class="st">"dim"</span>: dim, <span class="st">"n_heads"</span>: n_heads, <span class="st">"n_kv_heads"</span>: n_heads <span class="op">//</span> <span class="dv">4</span>},</span>
+<span id="cb9-19"><a href="#cb9-19"></a>    ),</span>
+<span id="cb9-20"><a href="#cb9-20"></a>    <span class="st">"MQA KV Cache"</span>: (</span>
+<span id="cb9-21"><a href="#cb9-21"></a>        GroupQueryAttentionKVCache,</span>
+<span id="cb9-22"><a href="#cb9-22"></a>        <span class="va">True</span>,</span>
+<span id="cb9-23"><a href="#cb9-23"></a>        {<span class="st">"dim"</span>: dim, <span class="st">"n_heads"</span>: n_heads, <span class="st">"n_kv_heads"</span>: <span class="dv">1</span>},</span>
+<span id="cb9-24"><a href="#cb9-24"></a>    ),</span>
+<span id="cb9-25"><a href="#cb9-25"></a>    <span class="st">"MLA KV Cache Decompress"</span>: (</span>
+<span id="cb9-26"><a href="#cb9-26"></a>        MultiHeadLatentAttentionDecompressKV,</span>
+<span id="cb9-27"><a href="#cb9-27"></a>        <span class="va">True</span>,</span>
+<span id="cb9-28"><a href="#cb9-28"></a>        {</span>
+<span id="cb9-29"><a href="#cb9-29"></a>            <span class="st">"dim"</span>: dim,</span>
+<span id="cb9-30"><a href="#cb9-30"></a>            <span class="st">"n_heads"</span>: n_heads,</span>
+<span id="cb9-31"><a href="#cb9-31"></a>            <span class="st">"q_compression_dim"</span>: dim <span class="op">//</span> <span class="dv">32</span>,</span>
+<span id="cb9-32"><a href="#cb9-32"></a>            <span class="st">"kv_compression_dim"</span>: dim <span class="op">//</span> <span class="dv">32</span>,</span>
+<span id="cb9-33"><a href="#cb9-33"></a>        },</span>
+<span id="cb9-34"><a href="#cb9-34"></a>    ),</span>
+<span id="cb9-35"><a href="#cb9-35"></a>    <span class="st">"MLA KV Cache Compress"</span>: (</span>
+<span id="cb9-36"><a href="#cb9-36"></a>        MultiHeadLatentAttentionCompressKV,</span>
+<span id="cb9-37"><a href="#cb9-37"></a>        <span class="va">True</span>,</span>
+<span id="cb9-38"><a href="#cb9-38"></a>        {</span>
+<span id="cb9-39"><a href="#cb9-39"></a>            <span class="st">"dim"</span>: dim,</span>
+<span id="cb9-40"><a href="#cb9-40"></a>            <span class="st">"n_heads"</span>: n_heads,</span>
+<span id="cb9-41"><a href="#cb9-41"></a>            <span class="st">"q_compression_dim"</span>: dim <span class="op">//</span> <span class="dv">32</span>,</span>
+<span id="cb9-42"><a href="#cb9-42"></a>            <span class="st">"kv_compression_dim"</span>: dim <span class="op">//</span> <span class="dv">32</span>,</span>
+<span id="cb9-43"><a href="#cb9-43"></a>        },</span>
+<span id="cb9-44"><a href="#cb9-44"></a>    ),</span>
+<span id="cb9-45"><a href="#cb9-45"></a>}</span>
+<span id="cb9-46"><a href="#cb9-46"></a></span>
+<span id="cb9-47"><a href="#cb9-47"></a>results <span class="op">=</span> {}</span>
+<span id="cb9-48"><a href="#cb9-48"></a></span>
+<span id="cb9-49"><a href="#cb9-49"></a><span class="cf">for</span> model_name, (model, use_kv_cache, kwargs) <span class="kw">in</span> models.items():</span>
+<span id="cb9-50"><a href="#cb9-50"></a>    <span class="bu">print</span>(<span class="ss">f"Profiling </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">..."</span>)</span>
+<span id="cb9-51"><a href="#cb9-51"></a>    cpu_time, memory_usage, gpu_memory, gpu_time, flops, tokens_per_sec, parameters <span class="op">=</span> (</span>
+<span id="cb9-52"><a href="#cb9-52"></a>        profile_model(</span>
+<span id="cb9-53"><a href="#cb9-53"></a>            model,</span>
+<span id="cb9-54"><a href="#cb9-54"></a>            input_seq,</span>
+<span id="cb9-55"><a href="#cb9-55"></a>            n_runs,</span>
+<span id="cb9-56"><a href="#cb9-56"></a>            max_length<span class="op">=</span>max_length,</span>
+<span id="cb9-57"><a href="#cb9-57"></a>            use_kv_cache<span class="op">=</span>use_kv_cache,</span>
+<span id="cb9-58"><a href="#cb9-58"></a>            device<span class="op">=</span>device,</span>
+<span id="cb9-59"><a href="#cb9-59"></a>            <span class="op">**</span>kwargs,</span>
+<span id="cb9-60"><a href="#cb9-60"></a>        )</span>
+<span id="cb9-61"><a href="#cb9-61"></a>    )</span>
+<span id="cb9-62"><a href="#cb9-62"></a>    results[model_name] <span class="op">=</span> {</span>
+<span id="cb9-63"><a href="#cb9-63"></a>        <span class="st">"cpu_time"</span>: cpu_time,</span>
+<span id="cb9-64"><a href="#cb9-64"></a>        <span class="st">"memory_usage"</span>: memory_usage,</span>
+<span id="cb9-65"><a href="#cb9-65"></a>        <span class="st">"gpu_memory"</span>: gpu_memory,</span>
+<span id="cb9-66"><a href="#cb9-66"></a>        <span class="st">"gpu_time"</span>: gpu_time,</span>
+<span id="cb9-67"><a href="#cb9-67"></a>        <span class="st">"flops"</span>: flops,</span>
+<span id="cb9-68"><a href="#cb9-68"></a>        <span class="st">"tokens_per_sec"</span>: tokens_per_sec,</span>
+<span id="cb9-69"><a href="#cb9-69"></a>        <span class="st">"parameters"</span>: parameters,</span>
+<span id="cb9-70"><a href="#cb9-70"></a>    }</span>
+<span id="cb9-71"><a href="#cb9-71"></a>    <span class="bu">print</span>(</span>
+<span id="cb9-72"><a href="#cb9-72"></a>        <span class="ss">f"Model: </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">, CPU Time: </span><span class="sc">{</span>cpu_time<span class="sc">:.2f}</span><span class="ss">s, Memory Usage: </span><span class="sc">{</span>memory_usage<span class="sc">:.2f}</span><span class="ss">MB, GPU Memory: </span><span class="sc">{</span>gpu_memory<span class="sc">:.2f}</span><span class="ss">MB, GPU Time: </span><span class="sc">{</span>gpu_time<span class="sc">:.2f}</span><span class="ss">s, FLOPS: </span><span class="sc">{</span>flops<span class="sc">:.2f}</span><span class="ss">GFLOPS, Parameters: </span><span class="sc">{</span>parameters<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb9-73"><a href="#cb9-73"></a>    )</span>
+<span id="cb9-74"><a href="#cb9-74"></a></span>
+<span id="cb9-75"><a href="#cb9-75"></a><span class="co"># Plot results</span></span>
+<span id="cb9-76"><a href="#cb9-76"></a>results_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb9-77"><a href="#cb9-77"></a>    {</span>
+<span id="cb9-78"><a href="#cb9-78"></a>        <span class="st">"Model"</span>: <span class="bu">list</span>(models.keys()),</span>
+<span id="cb9-79"><a href="#cb9-79"></a>        <span class="st">"CPU Time (s)"</span>: [results[model][<span class="st">"cpu_time"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-80"><a href="#cb9-80"></a>        <span class="st">"Memory Usage (MB)"</span>: [results[model][<span class="st">"memory_usage"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-81"><a href="#cb9-81"></a>        <span class="st">"GPU Memory (MB)"</span>: [results[model][<span class="st">"gpu_memory"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-82"><a href="#cb9-82"></a>        <span class="st">"GPU Time (s)"</span>: [results[model][<span class="st">"gpu_time"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-83"><a href="#cb9-83"></a>        <span class="st">"FLOPS (GFLOPS)"</span>: [results[model][<span class="st">"flops"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-84"><a href="#cb9-84"></a>        <span class="st">"Parameters"</span>: [results[model][<span class="st">"parameters"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-85"><a href="#cb9-85"></a>        <span class="st">"Tokens/s"</span>: [results[model][<span class="st">"tokens_per_sec"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-86"><a href="#cb9-86"></a>    }</span>
+<span id="cb9-87"><a href="#cb9-87"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Profiling MHA KV Cache...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/abrar/Library/Caches/pypoetry/virtualenvs/blog-FROQ9Grm-py3.11/lib/python3.11/site-packages/torch/autograd/profiler.py:228: UserWarning: CUDA is not available, disabling CUDA profiling
+  warn("CUDA is not available, disabling CUDA profiling")
+STAGE:2025-01-10 23:19:52 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
+STAGE:2025-01-10 23:19:54 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
+STAGE:2025-01-10 23:19:54 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: MHA KV Cache, CPU Time: 1.25s, Memory Usage: 1253.69MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 21.65GFLOPS, Parameters: 16785408
+Profiling GQA KV Cache...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>STAGE:2025-01-10 23:20:03 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
+STAGE:2025-01-10 23:20:04 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
+STAGE:2025-01-10 23:20:04 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: GQA KV Cache, CPU Time: 0.96s, Memory Usage: 1021.09MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 13.59GFLOPS, Parameters: 10490880
+Profiling MQA KV Cache...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>STAGE:2025-01-10 23:20:14 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
+STAGE:2025-01-10 23:20:15 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
+STAGE:2025-01-10 23:20:15 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: MQA KV Cache, CPU Time: 0.67s, Memory Usage: 1005.42MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 11.58GFLOPS, Parameters: 8917248
+Profiling MLA KV Cache Decompress...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>STAGE:2025-01-10 23:20:24 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
+STAGE:2025-01-10 23:20:25 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
+STAGE:2025-01-10 23:20:25 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: MLA KV Cache Decompress, CPU Time: 0.40s, Memory Usage: 1193.25MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 6.38GFLOPS, Parameters: 4855936
+Profiling MLA KV Cache Compress...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>STAGE:2025-01-10 23:20:34 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
+STAGE:2025-01-10 23:20:35 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
+STAGE:2025-01-10 23:20:35 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: MLA KV Cache Compress, CPU Time: 0.45s, Memory Usage: 2244.39MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 16.95GFLOPS, Parameters: 4855936</code></pre>
+</div>
+</div>
+<div id="cell-21" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Create a FacetGrid with 3 rows and 2 columns</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">12</span>))</span>
+<span id="cb21-3"><a href="#cb21-3"></a></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="co"># Define metrics to plot</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>metrics <span class="op">=</span> [</span>
+<span id="cb21-6"><a href="#cb21-6"></a>    <span class="st">"CPU Time (s)"</span>,</span>
+<span id="cb21-7"><a href="#cb21-7"></a>    <span class="st">"GPU Memory (MB)"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8"></a>    <span class="st">"Memory Usage (MB)"</span>,</span>
+<span id="cb21-9"><a href="#cb21-9"></a>    <span class="st">"GPU Time (s)"</span>,</span>
+<span id="cb21-10"><a href="#cb21-10"></a>    <span class="st">"Parameters"</span>,</span>
+<span id="cb21-11"><a href="#cb21-11"></a>    <span class="st">"Tokens/s"</span>,</span>
+<span id="cb21-12"><a href="#cb21-12"></a>]</span>
+<span id="cb21-13"><a href="#cb21-13"></a></span>
+<span id="cb21-14"><a href="#cb21-14"></a><span class="co"># Create facet grid for multiple plots</span></span>
+<span id="cb21-15"><a href="#cb21-15"></a>g <span class="op">=</span> sns.FacetGrid(</span>
+<span id="cb21-16"><a href="#cb21-16"></a>    pd.melt(results_df, id_vars<span class="op">=</span>[<span class="st">"Model"</span>], value_vars<span class="op">=</span>metrics),</span>
+<span id="cb21-17"><a href="#cb21-17"></a>    col_wrap<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb21-18"><a href="#cb21-18"></a>    height<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb21-19"><a href="#cb21-19"></a>    aspect<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb21-20"><a href="#cb21-20"></a>    row<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb21-21"><a href="#cb21-21"></a>    col<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb21-22"><a href="#cb21-22"></a>    sharex<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb21-23"><a href="#cb21-23"></a>    sharey<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb21-24"><a href="#cb21-24"></a>)</span>
+<span id="cb21-25"><a href="#cb21-25"></a></span>
+<span id="cb21-26"><a href="#cb21-26"></a><span class="co"># Plot bars for each metric</span></span>
+<span id="cb21-27"><a href="#cb21-27"></a>g.map_dataframe(</span>
+<span id="cb21-28"><a href="#cb21-28"></a>    sns.barplot,</span>
+<span id="cb21-29"><a href="#cb21-29"></a>    x<span class="op">=</span><span class="st">"Model"</span>,</span>
+<span id="cb21-30"><a href="#cb21-30"></a>    y<span class="op">=</span><span class="st">"value"</span>,</span>
+<span id="cb21-31"><a href="#cb21-31"></a>    hue<span class="op">=</span><span class="st">"Model"</span>,</span>
+<span id="cb21-32"><a href="#cb21-32"></a>    palette<span class="op">=</span><span class="st">"viridis"</span>,</span>
+<span id="cb21-33"><a href="#cb21-33"></a>)</span>
+<span id="cb21-34"><a href="#cb21-34"></a></span>
+<span id="cb21-35"><a href="#cb21-35"></a><span class="co"># Rotate x-axis labels for better readability</span></span>
+<span id="cb21-36"><a href="#cb21-36"></a><span class="cf">for</span> ax <span class="kw">in</span> g.axes:</span>
+<span id="cb21-37"><a href="#cb21-37"></a>    ax.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb21-38"><a href="#cb21-38"></a></span>
+<span id="cb21-39"><a href="#cb21-39"></a><span class="co"># Adjust layout to prevent overlapping</span></span>
+<span id="cb21-40"><a href="#cb21-40"></a>plt.tight_layout()</span>
+<span id="cb21-41"><a href="#cb21-41"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 1200x1200 with 0 Axes&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="head_attention_files/figure-html/cell-11-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ol type="1">
+<li>https://arxiv.org/pdf/1706.03762 Transformer</li>
+<li>https://arxiv.org/pdf/2405.04434 MLA</li>
+<li>https://arxiv.org/pdf/2305.13245v3 GQA</li>
+</ol>
+
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/abrarsheikh\.github\.io\/blog\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

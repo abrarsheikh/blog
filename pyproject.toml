@@ -24,6 +24,7 @@ huggingface-hub = "^0.26.2"
 datasets = "^3.1.0"
 tokenizers = "^0.20.3"
 tensorflow = "^2.18.0"
+black = "^24.10.0"
 
 [build-system]
 requires = ["poetry-core"]

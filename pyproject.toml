@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "blog"
+version = "0.1.0"
+description = ""
+authors = ["Abrar Sheikh"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.2.2"
+numpy = "^2.0.1"
+torch = "^2.3.1"
+torchvision = "^0.18.1"
+torchaudio = "^2.3.1"
+jupyterlab = "^4.2.4"
+seaborn = "^0.13.2"
+matplotlib = "^3.9.1"
+lightning = "^2.3.3"
+kaggle = "^1.6.17"
+scikit-learn = "^1.5.1"
+xgboost = "^2.1.1"
+stable-baselines3 = {extras = ["extra"], version = "^2.3.2"}
+huggingface-hub = "^0.26.2"
+datasets = "^3.1.0"
+tokenizers = "^0.20.3"
+tensorflow = "^2.18.0"
+black = "^24.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

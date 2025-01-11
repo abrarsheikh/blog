@@ -1,0 +1,24 @@
+project:
+  type: website
+
+website:
+  title: "blog"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+
+execute:
+  freeze: auto
+
+format:
+  html:
+    math: katex  # Use KaTeX for LaTeX math rendering
+    theme:
+      - cosmo    # Apply the Cosmo theme for a clean look
+    css: styles.css  # Include custom CSS for further customization
+    toc: true  # Enable table of contents
+    toc-depth: 3  # Set depth of the table of contents
+    code-fold: false  # Keep all code blocks unfolded
+    code-line-numbers: true  # Enable line numbers in code blocks
+    code-block-style: github  # Use GitHub-style code blocks for readability

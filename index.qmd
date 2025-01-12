@@ -1,7 +1,16 @@
 ---
-title: "blog"
+title: "Welcome to My Blog"
+listing:
+  contents: "content"
+  sort: "date-desc"
+  type: default
+  categories: true
+  sort-ui: true
+  filter-ui: true
 ---
 
-This is a Quarto website.
+# About Me
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+My name is Abrar. I am a software engineer. You can find me on [LinkedIn](https://www.linkedin.com/in/abrar-sheikh-a97b3a45/).
+
+# Posts

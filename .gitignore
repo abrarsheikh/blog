@@ -172,3 +172,4 @@ cython_debug/
 
 /.quarto/
 /_site/
+.DS_Store

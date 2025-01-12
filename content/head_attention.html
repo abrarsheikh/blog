@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2025-01-12">
 
 <title>Attention Mechanisms: Memory-Efficient Techniques and Implementations – blog</title>
 <style>
@@ -57,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -100,6 +101,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -171,7 +175,9 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#word-of-caution" id="toc-word-of-caution" class="nav-link active" data-scroll-target="#word-of-caution">Word of Caution</a></li>
+  <li><a href="#attention-mechanisms-memory-efficient-techniques-and-implementations" id="toc-attention-mechanisms-memory-efficient-techniques-and-implementations" class="nav-link active" data-scroll-target="#attention-mechanisms-memory-efficient-techniques-and-implementations">Attention Mechanisms: Memory-Efficient Techniques and Implementations</a>
+  <ul class="collapse">
+  <li><a href="#word-of-caution" id="toc-word-of-caution" class="nav-link" data-scroll-target="#word-of-caution">Word of Caution</a></li>
   <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention">Multi-Head Attention</a></li>
   <li><a href="#multi-head-attention-with-kv-cache" id="toc-multi-head-attention-with-kv-cache" class="nav-link" data-scroll-target="#multi-head-attention-with-kv-cache">Multi-Head Attention with KV Cache</a>
   <ul class="collapse">
@@ -187,7 +193,18 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#memory-comparison" id="toc-memory-comparison" class="nav-link" data-scroll-target="#memory-comparison">Memory Comparison</a></li>
   </ul></li>
+  <li><a href="#experiments" id="toc-experiments" class="nav-link" data-scroll-target="#experiments">Experiments</a></li>
+  <li><a href="#observations" id="toc-observations" class="nav-link" data-scroll-target="#observations">Observations</a>
+  <ul class="collapse">
+  <li><a href="#number-of-parameters" id="toc-number-of-parameters" class="nav-link" data-scroll-target="#number-of-parameters">1. Number of Parameters</a></li>
+  <li><a href="#memory-usage" id="toc-memory-usage" class="nav-link" data-scroll-target="#memory-usage">2. Memory Usage</a></li>
+  <li><a href="#throughput-tokenss" id="toc-throughput-tokenss" class="nav-link" data-scroll-target="#throughput-tokenss">3. Throughput (Tokens/s)</a></li>
+  <li><a href="#mlas-advantages-over-mha" id="toc-mlas-advantages-over-mha" class="nav-link" data-scroll-target="#mlas-advantages-over-mha">4. MLA’s Advantages Over MHA</a></li>
+  <li><a href="#trade-offs-between-models" id="toc-trade-offs-between-models" class="nav-link" data-scroll-target="#trade-offs-between-models">5. Trade-offs Between Models</a></li>
+  <li><a href="#additional-consideration" id="toc-additional-consideration" class="nav-link" data-scroll-target="#additional-consideration">Additional Consideration</a></li>
+  </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -197,13 +214,22 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Attention Mechanisms: Memory-Efficient Techniques and Implementations</h1>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">Machine Learning</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 12, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -213,17 +239,18 @@ window.Quarto = {
 </header>
 
 
-<div id="cell-1" class="cell" data-execution_count="2">
+<div id="cell-1" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> math</span>
 <span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> time</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="im">from</span> torch.profiler <span class="im">import</span> profile, record_function, ProfilerActivity</span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="attention-mechanisms-memory-efficient-techniques-and-implementations" class="level1">
+<h1>Attention Mechanisms: Memory-Efficient Techniques and Implementations</h1>
 <p>In this notebook, we explore various attention mechanisms used in deep learning, focusing on their memory usage and efficiency. We begin with a fundamental comparison between Multi-Head Attention (MHA) and Group Query Attention, highlighting how the latter reduces memory requirements by sharing key-value matrices across multiple query heads.</p>
 <p>We then delve into the concept of Multi-Query Attention, which further optimizes memory by using a single key-value matrix for all query heads. To take memory efficiency to the next level, we introduce Multi-Head Latent Attention (MLA), a technique that compresses the key-value matrices into a lower-dimensional latent space, drastically reducing memory usage while maintaining the ability to compute attention.</p>
 <p>Throughout the notebook, we provide detailed explanations of these techniques, including their memory usage formulas, followed by Python implementations of each attention mechanism to demonstrate their practical applications. The goal is to provide both theoretical insights and hands-on experience in optimizing attention mechanisms for large-scale models.</p>
@@ -235,9 +262,9 @@ window.Quarto = {
 <li>Incomplete Implementations: While the core attention mechanisms are implemented, the notebook does not include all real-world enhancements. For instance, positional encodings, such as RoPE (Rotary Positional Encoding), are not integrated here but are an essential part of most attention mechanisms in practical applications.</li>
 <li>No Ablation Studies: This notebook does not attempt to conduct ablation studies or determine which attention mechanism is “better” in terms of performance or accuracy. The goal is not to provide a comprehensive comparison but rather to explore and observe how different attention mechanisms affect memory usage and performance in a simplified context.</li>
 </ul>
-<div id="cell-4" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>MAX_BATCH_SIZE <span class="op">=</span> <span class="dv">4</span> <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> <span class="dv">16</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>MAX_SEQ_LEN <span class="op">=</span> <span class="dv">128</span> <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> <span class="dv">1024</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-4" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>MAX_BATCH_SIZE <span class="op">=</span> <span class="dv">16</span> <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> <span class="dv">32</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>MAX_SEQ_LEN <span class="op">=</span> <span class="dv">128</span> <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> <span class="dv">2048</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="multi-head-attention" class="level2">
@@ -291,7 +318,7 @@ Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 <li><span class="math inline">\(W_O \in \mathbb{R}^{(h \cdot d_k) \times d_{\text{model}}}\)</span> is a projection matrix for combining all heads.</li>
 <li><span class="math inline">\(h\)</span> is the number of attention heads.</li>
 </ul>
-<div id="cell-7" class="cell" data-execution_count="4">
+<div id="cell-7" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">class</span> MultiHeadAttention(nn.Module):</span>
 <span id="cb3-2"><a href="#cb3-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>):</span>
 <span id="cb3-3"><a href="#cb3-3"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
@@ -377,7 +404,7 @@ K_{\text{cached}} = \text{Concat}(K_{\text{prev}}, K_{\text{new}}), \quad V_{\te
 <li><strong>Reduced Redundancy</strong>: By caching, recomputation of ( K ) and ( V ) for all tokens is avoided, significantly speeding up inference for long sequences.</li>
 <li><strong>Scalability</strong>: This makes the model more memory-efficient, especially for real-time or autoregressive tasks like text generation.</li>
 </ul>
-<div id="cell-10" class="cell" data-execution_count="5">
+<div id="cell-10" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">class</span> MultiHeadAttentionKVCache(nn.Module):</span>
 <span id="cb4-2"><a href="#cb4-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>):</span>
 <span id="cb4-3"><a href="#cb4-3"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
@@ -486,7 +513,7 @@ V = V \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
 <p><span class="math display">\[
 \text{output} = \text{scores} \cdot V
 \]</span></p>
-<div id="cell-13" class="cell" data-execution_count="6">
+<div id="cell-13" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">class</span> GroupQueryAttentionKVCache(nn.Module):</span>
 <span id="cb5-2"><a href="#cb5-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>, n_kv_heads: <span class="bu">int</span>):</span>
 <span id="cb5-3"><a href="#cb5-3"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
@@ -625,7 +652,7 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 </ol>
 <p><strong>Why would we want to decompress the key and value matrices to the original dimension?</strong></p>
 <p>Although decompressing the key and value matrices to the original dimension is memory inefficient, it’s generally faster to compute attention scores and apply them to the values. Vs in the compressed version we would have to recompute all the past key and value matrices from the compressed latent vectors before computing the attention scores.</p>
-<div id="cell-16" class="cell" data-execution_count="7">
+<div id="cell-16" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">class</span> MultiHeadLatentAttentionDecompressKV(nn.Module):</span>
 <span id="cb6-2"><a href="#cb6-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
 <span id="cb6-3"><a href="#cb6-3"></a>        <span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>, q_compression_dim: <span class="bu">int</span>, kv_compression_dim: <span class="bu">int</span></span>
@@ -714,7 +741,7 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 <span id="cb6-86"><a href="#cb6-86"></a></span>
 <span id="cb6-87"><a href="#cb6-87"></a>        <span class="cf">return</span> output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-17" class="cell" data-execution_count="8">
+<div id="cell-17" class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">class</span> MultiHeadLatentAttentionCompressKV(nn.Module):</span>
 <span id="cb7-2"><a href="#cb7-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(</span>
 <span id="cb7-3"><a href="#cb7-3"></a>        <span class="va">self</span>, dim: <span class="bu">int</span>, n_heads: <span class="bu">int</span>, q_compression_dim: <span class="bu">int</span>, kv_compression_dim: <span class="bu">int</span></span>
@@ -861,7 +888,14 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 </tr>
 </tbody>
 </table>
-<div id="cell-19" class="cell" data-execution_count="9">
+</section>
+</section>
+<section id="experiments" class="level2">
+<h2 class="anchored" data-anchor-id="experiments">Experiments</h2>
+<p>In the following experiments, we will evaluate the performance and memory efficiency of different attention modules in an autoregressive generation setup. Using the profile_model function, we will measure key metrics such as memory usage, generation speed, and the number of trainable parameters. Each module will be tested with KV Cache enabled to optimize performance and reduce redundant computations.</p>
+<p>For consistency and fairness, all models will share the same configuration: batch size, sequence length, token dimensions, and number of attention heads. The goal is not to assess the correctness or quality of the models but rather to validate whether their performance and memory usage align with theoretical expectations.</p>
+<p>Below is the code for the generation loop and profiling. Through this analysis, we aim to understand the trade-offs each attention mechanism presents in terms of efficiency and scalability.</p>
+<div id="cell-20" class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">def</span> generate(</span>
 <span id="cb8-2"><a href="#cb8-2"></a>    model: nn.Module,</span>
 <span id="cb8-3"><a href="#cb8-3"></a>    input_tokens: torch.Tensor,</span>
@@ -926,102 +960,48 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 <span id="cb8-62"><a href="#cb8-62"></a>    total_time <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb8-63"><a href="#cb8-63"></a>    total_tokens <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb8-64"><a href="#cb8-64"></a></span>
-<span id="cb8-65"><a href="#cb8-65"></a>    <span class="cf">with</span> profile(</span>
-<span id="cb8-66"><a href="#cb8-66"></a>        record_shapes<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb8-67"><a href="#cb8-67"></a>        profile_memory<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb8-68"><a href="#cb8-68"></a>        with_flops<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb8-69"><a href="#cb8-69"></a>        activities<span class="op">=</span>[ProfilerActivity.CPU, ProfilerActivity.CUDA],</span>
-<span id="cb8-70"><a href="#cb8-70"></a>    ) <span class="im">as</span> prof:</span>
-<span id="cb8-71"><a href="#cb8-71"></a>        m_obj <span class="op">=</span> model(<span class="op">**</span>kwargs).to(device)</span>
-<span id="cb8-72"><a href="#cb8-72"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_runs):</span>
-<span id="cb8-73"><a href="#cb8-73"></a>            start_time <span class="op">=</span> time.time()</span>
-<span id="cb8-74"><a href="#cb8-74"></a>            _ <span class="op">=</span> generate(</span>
-<span id="cb8-75"><a href="#cb8-75"></a>                m_obj, input_seq, max_length<span class="op">=</span>max_length, use_kv_cache<span class="op">=</span>use_kv_cache</span>
-<span id="cb8-76"><a href="#cb8-76"></a>            )</span>
-<span id="cb8-77"><a href="#cb8-77"></a>            end_time <span class="op">=</span> time.time()</span>
-<span id="cb8-78"><a href="#cb8-78"></a></span>
-<span id="cb8-79"><a href="#cb8-79"></a>            total_time <span class="op">+=</span> end_time <span class="op">-</span> start_time  <span class="co"># Accumulate time in seconds</span></span>
-<span id="cb8-80"><a href="#cb8-80"></a>            total_tokens <span class="op">+=</span> max_length  <span class="co"># Accumulate tokens generated</span></span>
-<span id="cb8-81"><a href="#cb8-81"></a></span>
-<span id="cb8-82"><a href="#cb8-82"></a>    parameters <span class="op">=</span> <span class="bu">sum</span>(p.numel() <span class="cf">for</span> p <span class="kw">in</span> m_obj.parameters())</span>
-<span id="cb8-83"><a href="#cb8-83"></a>    <span class="co"># Compute tokens/sec</span></span>
-<span id="cb8-84"><a href="#cb8-84"></a>    tokens_per_sec <span class="op">=</span> total_tokens <span class="op">/</span> total_time <span class="cf">if</span> total_time <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
-<span id="cb8-85"><a href="#cb8-85"></a></span>
-<span id="cb8-86"><a href="#cb8-86"></a>    key_averages <span class="op">=</span> prof.key_averages()</span>
-<span id="cb8-87"><a href="#cb8-87"></a></span>
-<span id="cb8-88"><a href="#cb8-88"></a>    total_cpu_time <span class="op">=</span> (</span>
-<span id="cb8-89"><a href="#cb8-89"></a>        <span class="bu">sum</span>(</span>
-<span id="cb8-90"><a href="#cb8-90"></a>            item.self_cpu_time_total</span>
-<span id="cb8-91"><a href="#cb8-91"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
-<span id="cb8-92"><a href="#cb8-92"></a>            <span class="cf">if</span> item.self_cpu_time_total <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
-<span id="cb8-93"><a href="#cb8-93"></a>        )</span>
-<span id="cb8-94"><a href="#cb8-94"></a>        <span class="op">/</span> <span class="fl">1e6</span>  <span class="co"># Convert ns to s</span></span>
-<span id="cb8-95"><a href="#cb8-95"></a>    )</span>
-<span id="cb8-96"><a href="#cb8-96"></a>    total_cpu_memory <span class="op">=</span> <span class="bu">sum</span>(</span>
-<span id="cb8-97"><a href="#cb8-97"></a>        item.cpu_memory_usage</span>
-<span id="cb8-98"><a href="#cb8-98"></a>        <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
-<span id="cb8-99"><a href="#cb8-99"></a>        <span class="cf">if</span> item.cpu_memory_usage <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
-<span id="cb8-100"><a href="#cb8-100"></a>    ) <span class="op">/</span> (</span>
-<span id="cb8-101"><a href="#cb8-101"></a>        <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span></span>
-<span id="cb8-102"><a href="#cb8-102"></a>    )  <span class="co"># Convert bytes to MB</span></span>
-<span id="cb8-103"><a href="#cb8-103"></a>    total_gpu_time <span class="op">=</span> (</span>
-<span id="cb8-104"><a href="#cb8-104"></a>        <span class="bu">sum</span>(</span>
-<span id="cb8-105"><a href="#cb8-105"></a>            item.self_device_time_total</span>
-<span id="cb8-106"><a href="#cb8-106"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
-<span id="cb8-107"><a href="#cb8-107"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"self_device_time_total"</span>)</span>
-<span id="cb8-108"><a href="#cb8-108"></a>            <span class="kw">and</span> item.self_device_time_total <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
-<span id="cb8-109"><a href="#cb8-109"></a>        )</span>
-<span id="cb8-110"><a href="#cb8-110"></a>        <span class="op">/</span> <span class="fl">1e6</span>  <span class="co"># Convert ns to s</span></span>
-<span id="cb8-111"><a href="#cb8-111"></a>    ) <span class="kw">or</span> (</span>
-<span id="cb8-112"><a href="#cb8-112"></a>        <span class="bu">sum</span>(</span>
-<span id="cb8-113"><a href="#cb8-113"></a>            item.self_cuda_time_total</span>
-<span id="cb8-114"><a href="#cb8-114"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
-<span id="cb8-115"><a href="#cb8-115"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"self_cuda_time_total"</span>)</span>
-<span id="cb8-116"><a href="#cb8-116"></a>            <span class="kw">and</span> item.self_cuda_time_total <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
-<span id="cb8-117"><a href="#cb8-117"></a>        )</span>
-<span id="cb8-118"><a href="#cb8-118"></a>        <span class="op">/</span> <span class="fl">1e6</span>  <span class="co"># Convert ns to s</span></span>
-<span id="cb8-119"><a href="#cb8-119"></a>    )</span>
-<span id="cb8-120"><a href="#cb8-120"></a>    total_gpu_memory <span class="op">=</span> (</span>
-<span id="cb8-121"><a href="#cb8-121"></a>        <span class="bu">sum</span>(</span>
-<span id="cb8-122"><a href="#cb8-122"></a>            item.cuda_memory_usage</span>
-<span id="cb8-123"><a href="#cb8-123"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
-<span id="cb8-124"><a href="#cb8-124"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"cuda_memory_usage"</span>) <span class="kw">and</span> item.cuda_memory_usage <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
-<span id="cb8-125"><a href="#cb8-125"></a>        )</span>
-<span id="cb8-126"><a href="#cb8-126"></a>        <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)  <span class="co"># Convert bytes to MB</span></span>
-<span id="cb8-127"><a href="#cb8-127"></a>    ) <span class="kw">or</span> (</span>
-<span id="cb8-128"><a href="#cb8-128"></a>        <span class="bu">sum</span>(</span>
-<span id="cb8-129"><a href="#cb8-129"></a>            item.cuda_memory_usage</span>
-<span id="cb8-130"><a href="#cb8-130"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
-<span id="cb8-131"><a href="#cb8-131"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"self_cuda_memory_usage"</span>)</span>
-<span id="cb8-132"><a href="#cb8-132"></a>            <span class="kw">and</span> item.cuda_memory_usage <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
-<span id="cb8-133"><a href="#cb8-133"></a>        )</span>
-<span id="cb8-134"><a href="#cb8-134"></a>        <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)  <span class="co"># Convert bytes to MB</span></span>
-<span id="cb8-135"><a href="#cb8-135"></a>    )</span>
-<span id="cb8-136"><a href="#cb8-136"></a>    flops <span class="op">=</span> (</span>
-<span id="cb8-137"><a href="#cb8-137"></a>        <span class="bu">sum</span>(</span>
-<span id="cb8-138"><a href="#cb8-138"></a>            item.flops</span>
-<span id="cb8-139"><a href="#cb8-139"></a>            <span class="cf">for</span> item <span class="kw">in</span> key_averages</span>
-<span id="cb8-140"><a href="#cb8-140"></a>            <span class="cf">if</span> <span class="bu">hasattr</span>(item, <span class="st">"flops"</span>) <span class="kw">and</span> item.flops <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span></span>
-<span id="cb8-141"><a href="#cb8-141"></a>        )</span>
-<span id="cb8-142"><a href="#cb8-142"></a>        <span class="op">/</span> <span class="fl">1e9</span>  <span class="co"># Convert flops to GFLOPS</span></span>
-<span id="cb8-143"><a href="#cb8-143"></a>    )</span>
-<span id="cb8-144"><a href="#cb8-144"></a></span>
-<span id="cb8-145"><a href="#cb8-145"></a>    <span class="cf">return</span> (</span>
-<span id="cb8-146"><a href="#cb8-146"></a>        total_cpu_time,</span>
-<span id="cb8-147"><a href="#cb8-147"></a>        total_cpu_memory,</span>
-<span id="cb8-148"><a href="#cb8-148"></a>        total_gpu_memory,</span>
-<span id="cb8-149"><a href="#cb8-149"></a>        total_gpu_time,</span>
-<span id="cb8-150"><a href="#cb8-150"></a>        flops,</span>
-<span id="cb8-151"><a href="#cb8-151"></a>        tokens_per_sec,</span>
-<span id="cb8-152"><a href="#cb8-152"></a>        parameters,</span>
-<span id="cb8-153"><a href="#cb8-153"></a>    )</span>
-<span id="cb8-154"><a href="#cb8-154"></a></span>
-<span id="cb8-155"><a href="#cb8-155"></a></span>
-<span id="cb8-156"><a href="#cb8-156"></a><span class="co"># get number of parameters</span></span>
-<span id="cb8-157"><a href="#cb8-157"></a><span class="kw">def</span> get_num_params(model: nn.Module) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
-<span id="cb8-158"><a href="#cb8-158"></a>    <span class="cf">return</span> <span class="bu">sum</span>(p.numel() <span class="cf">for</span> p <span class="kw">in</span> model.parameters())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-65"><a href="#cb8-65"></a>    torch.cuda.empty_cache() <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="va">None</span></span>
+<span id="cb8-66"><a href="#cb8-66"></a>    initial_memory <span class="op">=</span> torch.cuda.memory_allocated() <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> get_cpu_memory_usage()</span>
+<span id="cb8-67"><a href="#cb8-67"></a></span>
+<span id="cb8-68"><a href="#cb8-68"></a></span>
+<span id="cb8-69"><a href="#cb8-69"></a>    m_obj <span class="op">=</span> model(<span class="op">**</span>kwargs).to(device)</span>
+<span id="cb8-70"><a href="#cb8-70"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_runs):</span>
+<span id="cb8-71"><a href="#cb8-71"></a>        start_time <span class="op">=</span> time.time()</span>
+<span id="cb8-72"><a href="#cb8-72"></a>        _ <span class="op">=</span> generate(</span>
+<span id="cb8-73"><a href="#cb8-73"></a>            m_obj, input_seq, max_length<span class="op">=</span>max_length, use_kv_cache<span class="op">=</span>use_kv_cache</span>
+<span id="cb8-74"><a href="#cb8-74"></a>        )</span>
+<span id="cb8-75"><a href="#cb8-75"></a>        end_time <span class="op">=</span> time.time()</span>
+<span id="cb8-76"><a href="#cb8-76"></a></span>
+<span id="cb8-77"><a href="#cb8-77"></a>        total_time <span class="op">+=</span> end_time <span class="op">-</span> start_time  <span class="co"># Accumulate time in seconds</span></span>
+<span id="cb8-78"><a href="#cb8-78"></a>        total_tokens <span class="op">+=</span> max_length  <span class="co"># Accumulate tokens generated</span></span>
+<span id="cb8-79"><a href="#cb8-79"></a></span>
+<span id="cb8-80"><a href="#cb8-80"></a>    <span class="co"># Measure memory usage after inference</span></span>
+<span id="cb8-81"><a href="#cb8-81"></a>    final_memory <span class="op">=</span> torch.cuda.memory_allocated() <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> get_cpu_memory_usage()</span>
+<span id="cb8-82"><a href="#cb8-82"></a>    memory_usage <span class="op">=</span> (final_memory <span class="op">-</span> initial_memory) <span class="op">/</span> <span class="dv">1024</span> <span class="op">/</span> <span class="dv">1024</span>  <span class="co"># Convert to MB</span></span>
+<span id="cb8-83"><a href="#cb8-83"></a>    parameters <span class="op">=</span> <span class="bu">sum</span>(p.numel() <span class="cf">for</span> p <span class="kw">in</span> m_obj.parameters())</span>
+<span id="cb8-84"><a href="#cb8-84"></a>    <span class="co"># Compute tokens/sec</span></span>
+<span id="cb8-85"><a href="#cb8-85"></a>    tokens_per_sec <span class="op">=</span> total_tokens <span class="op">/</span> total_time <span class="cf">if</span> total_time <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb8-86"><a href="#cb8-86"></a></span>
+<span id="cb8-87"><a href="#cb8-87"></a>    <span class="cf">return</span> (</span>
+<span id="cb8-88"><a href="#cb8-88"></a>        total_time,</span>
+<span id="cb8-89"><a href="#cb8-89"></a>        memory_usage,</span>
+<span id="cb8-90"><a href="#cb8-90"></a>        tokens_per_sec,</span>
+<span id="cb8-91"><a href="#cb8-91"></a>        parameters,</span>
+<span id="cb8-92"><a href="#cb8-92"></a>    )</span>
+<span id="cb8-93"><a href="#cb8-93"></a></span>
+<span id="cb8-94"><a href="#cb8-94"></a><span class="co"># get number of parameters</span></span>
+<span id="cb8-95"><a href="#cb8-95"></a><span class="kw">def</span> get_num_params(model: nn.Module) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb8-96"><a href="#cb8-96"></a>    <span class="cf">return</span> <span class="bu">sum</span>(p.numel() <span class="cf">for</span> p <span class="kw">in</span> model.parameters())</span>
+<span id="cb8-97"><a href="#cb8-97"></a></span>
+<span id="cb8-98"><a href="#cb8-98"></a><span class="im">import</span> psutil</span>
+<span id="cb8-99"><a href="#cb8-99"></a><span class="im">import</span> os</span>
+<span id="cb8-100"><a href="#cb8-100"></a></span>
+<span id="cb8-101"><a href="#cb8-101"></a><span class="kw">def</span> get_cpu_memory_usage():</span>
+<span id="cb8-102"><a href="#cb8-102"></a>    process <span class="op">=</span> psutil.Process(os.getpid())</span>
+<span id="cb8-103"><a href="#cb8-103"></a>    memory_usage <span class="op">=</span> process.memory_info().rss  <span class="co"># Resident Set Size (RSS) in bytes</span></span>
+<span id="cb8-104"><a href="#cb8-104"></a>    <span class="cf">return</span> memory_usage</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-20" class="cell" data-execution_count="10">
+<div id="cell-21" class="cell" data-outputid="7b2b134a-8f11-42e7-bced-fa97f63ae3df" data-execution_count="40">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Main evaluation loop</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a>batch_size <span class="op">=</span> MAX_BATCH_SIZE <span class="op">//</span> <span class="dv">2</span></span>
 <span id="cb9-3"><a href="#cb9-3"></a>seq_len <span class="op">=</span> MAX_SEQ_LEN <span class="op">//</span> <span class="dv">4</span></span>
@@ -1072,7 +1052,7 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 <span id="cb9-48"><a href="#cb9-48"></a></span>
 <span id="cb9-49"><a href="#cb9-49"></a><span class="cf">for</span> model_name, (model, use_kv_cache, kwargs) <span class="kw">in</span> models.items():</span>
 <span id="cb9-50"><a href="#cb9-50"></a>    <span class="bu">print</span>(<span class="ss">f"Profiling </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">..."</span>)</span>
-<span id="cb9-51"><a href="#cb9-51"></a>    cpu_time, memory_usage, gpu_memory, gpu_time, flops, tokens_per_sec, parameters <span class="op">=</span> (</span>
+<span id="cb9-51"><a href="#cb9-51"></a>    total_time, memory_usage, tokens_per_sec, parameters <span class="op">=</span> (</span>
 <span id="cb9-52"><a href="#cb9-52"></a>        profile_model(</span>
 <span id="cb9-53"><a href="#cb9-53"></a>            model,</span>
 <span id="cb9-54"><a href="#cb9-54"></a>            input_seq,</span>
@@ -1084,130 +1064,475 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 <span id="cb9-60"><a href="#cb9-60"></a>        )</span>
 <span id="cb9-61"><a href="#cb9-61"></a>    )</span>
 <span id="cb9-62"><a href="#cb9-62"></a>    results[model_name] <span class="op">=</span> {</span>
-<span id="cb9-63"><a href="#cb9-63"></a>        <span class="st">"cpu_time"</span>: cpu_time,</span>
+<span id="cb9-63"><a href="#cb9-63"></a>        <span class="st">"total_time"</span>: total_time,</span>
 <span id="cb9-64"><a href="#cb9-64"></a>        <span class="st">"memory_usage"</span>: memory_usage,</span>
-<span id="cb9-65"><a href="#cb9-65"></a>        <span class="st">"gpu_memory"</span>: gpu_memory,</span>
-<span id="cb9-66"><a href="#cb9-66"></a>        <span class="st">"gpu_time"</span>: gpu_time,</span>
-<span id="cb9-67"><a href="#cb9-67"></a>        <span class="st">"flops"</span>: flops,</span>
-<span id="cb9-68"><a href="#cb9-68"></a>        <span class="st">"tokens_per_sec"</span>: tokens_per_sec,</span>
-<span id="cb9-69"><a href="#cb9-69"></a>        <span class="st">"parameters"</span>: parameters,</span>
-<span id="cb9-70"><a href="#cb9-70"></a>    }</span>
-<span id="cb9-71"><a href="#cb9-71"></a>    <span class="bu">print</span>(</span>
-<span id="cb9-72"><a href="#cb9-72"></a>        <span class="ss">f"Model: </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">, CPU Time: </span><span class="sc">{</span>cpu_time<span class="sc">:.2f}</span><span class="ss">s, Memory Usage: </span><span class="sc">{</span>memory_usage<span class="sc">:.2f}</span><span class="ss">MB, GPU Memory: </span><span class="sc">{</span>gpu_memory<span class="sc">:.2f}</span><span class="ss">MB, GPU Time: </span><span class="sc">{</span>gpu_time<span class="sc">:.2f}</span><span class="ss">s, FLOPS: </span><span class="sc">{</span>flops<span class="sc">:.2f}</span><span class="ss">GFLOPS, Parameters: </span><span class="sc">{</span>parameters<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb9-73"><a href="#cb9-73"></a>    )</span>
-<span id="cb9-74"><a href="#cb9-74"></a></span>
-<span id="cb9-75"><a href="#cb9-75"></a><span class="co"># Plot results</span></span>
-<span id="cb9-76"><a href="#cb9-76"></a>results_df <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb9-77"><a href="#cb9-77"></a>    {</span>
-<span id="cb9-78"><a href="#cb9-78"></a>        <span class="st">"Model"</span>: <span class="bu">list</span>(models.keys()),</span>
-<span id="cb9-79"><a href="#cb9-79"></a>        <span class="st">"CPU Time (s)"</span>: [results[model][<span class="st">"cpu_time"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
-<span id="cb9-80"><a href="#cb9-80"></a>        <span class="st">"Memory Usage (MB)"</span>: [results[model][<span class="st">"memory_usage"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
-<span id="cb9-81"><a href="#cb9-81"></a>        <span class="st">"GPU Memory (MB)"</span>: [results[model][<span class="st">"gpu_memory"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
-<span id="cb9-82"><a href="#cb9-82"></a>        <span class="st">"GPU Time (s)"</span>: [results[model][<span class="st">"gpu_time"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
-<span id="cb9-83"><a href="#cb9-83"></a>        <span class="st">"FLOPS (GFLOPS)"</span>: [results[model][<span class="st">"flops"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
-<span id="cb9-84"><a href="#cb9-84"></a>        <span class="st">"Parameters"</span>: [results[model][<span class="st">"parameters"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
-<span id="cb9-85"><a href="#cb9-85"></a>        <span class="st">"Tokens/s"</span>: [results[model][<span class="st">"tokens_per_sec"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
-<span id="cb9-86"><a href="#cb9-86"></a>    }</span>
-<span id="cb9-87"><a href="#cb9-87"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-65"><a href="#cb9-65"></a>        <span class="st">"tokens_per_sec"</span>: tokens_per_sec,</span>
+<span id="cb9-66"><a href="#cb9-66"></a>        <span class="st">"parameters"</span>: parameters,</span>
+<span id="cb9-67"><a href="#cb9-67"></a>    }</span>
+<span id="cb9-68"><a href="#cb9-68"></a>    <span class="bu">print</span>(</span>
+<span id="cb9-69"><a href="#cb9-69"></a>        <span class="ss">f"Model: </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">, Total Time: </span><span class="sc">{</span>total_time<span class="sc">:.2f}</span><span class="ss">s, Memory Usage: </span><span class="sc">{</span>memory_usage<span class="sc">:.2f}</span><span class="ss">MB, Parameters: </span><span class="sc">{</span>parameters<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb9-70"><a href="#cb9-70"></a>    )</span>
+<span id="cb9-71"><a href="#cb9-71"></a></span>
+<span id="cb9-72"><a href="#cb9-72"></a><span class="co"># Plot results</span></span>
+<span id="cb9-73"><a href="#cb9-73"></a>results_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb9-74"><a href="#cb9-74"></a>    {</span>
+<span id="cb9-75"><a href="#cb9-75"></a>        <span class="st">"Model"</span>: <span class="bu">list</span>(models.keys()),</span>
+<span id="cb9-76"><a href="#cb9-76"></a>        <span class="st">"Total Time (s)"</span>: [results[model][<span class="st">"total_time"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-77"><a href="#cb9-77"></a>        <span class="st">"Memory Usage (MB)"</span>: [results[model][<span class="st">"memory_usage"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-78"><a href="#cb9-78"></a>        <span class="st">"Parameters"</span>: [results[model][<span class="st">"parameters"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-79"><a href="#cb9-79"></a>        <span class="st">"Tokens/s"</span>: [results[model][<span class="st">"tokens_per_sec"</span>] <span class="cf">for</span> model <span class="kw">in</span> models],</span>
+<span id="cb9-80"><a href="#cb9-80"></a>    }</span>
+<span id="cb9-81"><a href="#cb9-81"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Profiling MHA KV Cache...</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/Users/abrar/Library/Caches/pypoetry/virtualenvs/blog-FROQ9Grm-py3.11/lib/python3.11/site-packages/torch/autograd/profiler.py:228: UserWarning: CUDA is not available, disabling CUDA profiling
-  warn("CUDA is not available, disabling CUDA profiling")
-STAGE:2025-01-10 23:19:52 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
-STAGE:2025-01-10 23:19:54 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
-STAGE:2025-01-10 23:19:54 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Model: MHA KV Cache, CPU Time: 1.25s, Memory Usage: 1253.69MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 21.65GFLOPS, Parameters: 16785408
-Profiling GQA KV Cache...</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>STAGE:2025-01-10 23:20:03 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
-STAGE:2025-01-10 23:20:04 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
-STAGE:2025-01-10 23:20:04 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Model: GQA KV Cache, CPU Time: 0.96s, Memory Usage: 1021.09MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 13.59GFLOPS, Parameters: 10490880
-Profiling MQA KV Cache...</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>STAGE:2025-01-10 23:20:14 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
-STAGE:2025-01-10 23:20:15 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
-STAGE:2025-01-10 23:20:15 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Model: MQA KV Cache, CPU Time: 0.67s, Memory Usage: 1005.42MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 11.58GFLOPS, Parameters: 8917248
-Profiling MLA KV Cache Decompress...</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>STAGE:2025-01-10 23:20:24 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
-STAGE:2025-01-10 23:20:25 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
-STAGE:2025-01-10 23:20:25 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Model: MLA KV Cache Decompress, CPU Time: 0.40s, Memory Usage: 1193.25MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 6.38GFLOPS, Parameters: 4855936
-Profiling MLA KV Cache Compress...</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>STAGE:2025-01-10 23:20:34 47461:3792076 ActivityProfilerController.cpp:314] Completed Stage: Warm Up
-STAGE:2025-01-10 23:20:35 47461:3792076 ActivityProfilerController.cpp:320] Completed Stage: Collection
-STAGE:2025-01-10 23:20:35 47461:3792076 ActivityProfilerController.cpp:324] Completed Stage: Post Processing</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Model: MLA KV Cache Compress, CPU Time: 0.45s, Memory Usage: 2244.39MB, GPU Memory: 0.00MB, GPU Time: 0.00s, FLOPS: 16.95GFLOPS, Parameters: 4855936</code></pre>
+<pre><code>Profiling MHA KV Cache...
+Model: MHA KV Cache, Total Time: 20.87s, Memory Usage: 1216.03MB, Parameters: 16785408
+Profiling GQA KV Cache...
+Model: GQA KV Cache, Total Time: 15.43s, Memory Usage: 488.02MB, Parameters: 10490880
+Profiling MQA KV Cache...
+Model: MQA KV Cache, Total Time: 14.10s, Memory Usage: 290.02MB, Parameters: 8917248
+Profiling MLA KV Cache Decompress...
+Model: MLA KV Cache Decompress, Total Time: 18.53s, Memory Usage: 1234.52MB, Parameters: 4855936
+Profiling MLA KV Cache Compress...
+Model: MLA KV Cache Compress, Total Time: 30.92s, Memory Usage: 226.52MB, Parameters: 4855936</code></pre>
 </div>
 </div>
-<div id="cell-21" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Create a FacetGrid with 3 rows and 2 columns</span></span>
-<span id="cb21-2"><a href="#cb21-2"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">12</span>))</span>
-<span id="cb21-3"><a href="#cb21-3"></a></span>
-<span id="cb21-4"><a href="#cb21-4"></a><span class="co"># Define metrics to plot</span></span>
-<span id="cb21-5"><a href="#cb21-5"></a>metrics <span class="op">=</span> [</span>
-<span id="cb21-6"><a href="#cb21-6"></a>    <span class="st">"CPU Time (s)"</span>,</span>
-<span id="cb21-7"><a href="#cb21-7"></a>    <span class="st">"GPU Memory (MB)"</span>,</span>
-<span id="cb21-8"><a href="#cb21-8"></a>    <span class="st">"Memory Usage (MB)"</span>,</span>
-<span id="cb21-9"><a href="#cb21-9"></a>    <span class="st">"GPU Time (s)"</span>,</span>
-<span id="cb21-10"><a href="#cb21-10"></a>    <span class="st">"Parameters"</span>,</span>
-<span id="cb21-11"><a href="#cb21-11"></a>    <span class="st">"Tokens/s"</span>,</span>
-<span id="cb21-12"><a href="#cb21-12"></a>]</span>
-<span id="cb21-13"><a href="#cb21-13"></a></span>
-<span id="cb21-14"><a href="#cb21-14"></a><span class="co"># Create facet grid for multiple plots</span></span>
-<span id="cb21-15"><a href="#cb21-15"></a>g <span class="op">=</span> sns.FacetGrid(</span>
-<span id="cb21-16"><a href="#cb21-16"></a>    pd.melt(results_df, id_vars<span class="op">=</span>[<span class="st">"Model"</span>], value_vars<span class="op">=</span>metrics),</span>
-<span id="cb21-17"><a href="#cb21-17"></a>    col_wrap<span class="op">=</span><span class="dv">2</span>,</span>
-<span id="cb21-18"><a href="#cb21-18"></a>    height<span class="op">=</span><span class="dv">4</span>,</span>
-<span id="cb21-19"><a href="#cb21-19"></a>    aspect<span class="op">=</span><span class="fl">1.5</span>,</span>
-<span id="cb21-20"><a href="#cb21-20"></a>    row<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb21-21"><a href="#cb21-21"></a>    col<span class="op">=</span><span class="st">"variable"</span>,</span>
-<span id="cb21-22"><a href="#cb21-22"></a>    sharex<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb21-23"><a href="#cb21-23"></a>    sharey<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb21-24"><a href="#cb21-24"></a>)</span>
-<span id="cb21-25"><a href="#cb21-25"></a></span>
-<span id="cb21-26"><a href="#cb21-26"></a><span class="co"># Plot bars for each metric</span></span>
-<span id="cb21-27"><a href="#cb21-27"></a>g.map_dataframe(</span>
-<span id="cb21-28"><a href="#cb21-28"></a>    sns.barplot,</span>
-<span id="cb21-29"><a href="#cb21-29"></a>    x<span class="op">=</span><span class="st">"Model"</span>,</span>
-<span id="cb21-30"><a href="#cb21-30"></a>    y<span class="op">=</span><span class="st">"value"</span>,</span>
-<span id="cb21-31"><a href="#cb21-31"></a>    hue<span class="op">=</span><span class="st">"Model"</span>,</span>
-<span id="cb21-32"><a href="#cb21-32"></a>    palette<span class="op">=</span><span class="st">"viridis"</span>,</span>
-<span id="cb21-33"><a href="#cb21-33"></a>)</span>
-<span id="cb21-34"><a href="#cb21-34"></a></span>
-<span id="cb21-35"><a href="#cb21-35"></a><span class="co"># Rotate x-axis labels for better readability</span></span>
-<span id="cb21-36"><a href="#cb21-36"></a><span class="cf">for</span> ax <span class="kw">in</span> g.axes:</span>
-<span id="cb21-37"><a href="#cb21-37"></a>    ax.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, rotation<span class="op">=</span><span class="dv">45</span>)</span>
-<span id="cb21-38"><a href="#cb21-38"></a></span>
-<span id="cb21-39"><a href="#cb21-39"></a><span class="co"># Adjust layout to prevent overlapping</span></span>
-<span id="cb21-40"><a href="#cb21-40"></a>plt.tight_layout()</span>
-<span id="cb21-41"><a href="#cb21-41"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="observations" class="level2">
+<h2 class="anchored" data-anchor-id="observations">Observations</h2>
+<section id="number-of-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="number-of-parameters">1. Number of Parameters</h3>
+<p>The number of parameters follows the order <strong>MHA &gt; GQA &gt; MQA &gt; MLA</strong>. This is because MHA maintains independent key-value projections for all heads, whereas MLA uses low-rank approximations.</p>
+</section>
+<section id="memory-usage" class="level3">
+<h3 class="anchored" data-anchor-id="memory-usage">2. Memory Usage</h3>
+<ul>
+<li><strong>MHA</strong>: The highest memory usage, as the key-value cache stores projections for all heads independently.<br>
+</li>
+<li><strong>MLA with Decompressed KV</strong>: Comparable to MHA in memory usage because it also maintains decompressed key-value matrices.<br>
+</li>
+<li><strong>MLA with Compressed KV</strong>: The lowest memory usage because the key-value cache stores compressed latent vectors instead of full matrices.<br>
+</li>
+<li><strong>GQA and MQA</strong>:
+<ul>
+<li>GQA uses less memory than MHA because multiple query heads share the same key-value heads.<br>
+</li>
+<li>MQA further reduces memory usage by having all query heads share a single set of key-value projections.</li>
+</ul></li>
+</ul>
+</section>
+<section id="throughput-tokenss" class="level3">
+<h3 class="anchored" data-anchor-id="throughput-tokenss">3. Throughput (Tokens/s)</h3>
+<ul>
+<li><strong>MLA with Decompressed KV</strong> achieves higher throughput than MLA with Compressed KV.<br>
+</li>
+<li>This happens because in MLA with Compressed KV, key-value matrices need to be recomputed from latent vectors for every token during attention computation, adding overhead.<br>
+</li>
+<li>Despite this overhead, MLA remains efficient in memory and parameters, with the decompressed variant being the better choice for practical implementations, as demonstrated in the DeepSeek paper.</li>
+</ul>
+</section>
+<section id="mlas-advantages-over-mha" class="level3">
+<h3 class="anchored" data-anchor-id="mlas-advantages-over-mha">4. MLA’s Advantages Over MHA</h3>
+<ul>
+<li>MLA achieves significantly fewer parameters by using low-rank approximations like LoRA (Low-Rank Adaptation) for key and value projection matrices.<br>
+</li>
+<li>While MLA reduces parameters, the DeepSeek paper claims its prediction quality is on par with or better than MHA. This makes MLA attractive for memory-constrained environments without sacrificing quality.</li>
+</ul>
+</section>
+<section id="trade-offs-between-models" class="level3">
+<h3 class="anchored" data-anchor-id="trade-offs-between-models">5. Trade-offs Between Models</h3>
+<ul>
+<li><strong>MHA</strong>: Best prediction quality due to the highest expressiveness, enabled by the largest number of parameters.<br>
+</li>
+<li><strong>GQA and MQA</strong>:
+<ul>
+<li>As parameters decrease, throughput improves significantly, making these models ideal for scenarios where speed and resource efficiency are critical.<br>
+</li>
+<li>However, a slight reduction in prediction quality might be expected in theory.<br>
+</li>
+</ul></li>
+<li><strong>MLA</strong>:
+<ul>
+<li>Strikes a balance by offering reduced memory usage and parameters.<br>
+</li>
+<li>Compressed MLA is memory-efficient, while decompressed MLA is more throughput-friendly.</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="additional-consideration" class="level3">
+<h3 class="anchored" data-anchor-id="additional-consideration">Additional Consideration</h3>
+<p>Each model aligns with specific use cases: - <strong>MHA</strong>: Suited for scenarios where prediction quality is paramount, regardless of resource cost.<br>
+- <strong>MQA/GQA</strong>: Ideal for real-time systems with stringent latency requirements.<br>
+- <strong>MLA</strong>: Best for memory-constrained environments, such as edge devices or applications with limited hardware resources.</p>
+<div id="cell-23" class="cell" data-outputid="dd3a13a8-eb12-4828-eca8-40a2f480f369" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a>results_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+
+  <div id="df-3c87d5ea-5b4d-4306-8fcd-138cac0f7593" class="colab-df-container">
+    <div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Model</th>
+<th data-quarto-table-cell-role="th">Total Time (s)</th>
+<th data-quarto-table-cell-role="th">Memory Usage (MB)</th>
+<th data-quarto-table-cell-role="th">Parameters</th>
+<th data-quarto-table-cell-role="th">Tokens/s</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>MHA KV Cache</td>
+<td>20.869432</td>
+<td>1216.031250</td>
+<td>16785408</td>
+<td>245.334903</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>GQA KV Cache</td>
+<td>15.433480</td>
+<td>488.019531</td>
+<td>10490880</td>
+<td>331.746317</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>MQA KV Cache</td>
+<td>14.097093</td>
+<td>290.016602</td>
+<td>8917248</td>
+<td>363.195457</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>MLA KV Cache Decompress</td>
+<td>18.534862</td>
+<td>1234.524414</td>
+<td>4855936</td>
+<td>276.236215</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>MLA KV Cache Compress</td>
+<td>30.923788</td>
+<td>226.524414</td>
+<td>4855936</td>
+<td>165.568332</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-3c87d5ea-5b4d-4306-8fcd-138cac0f7593')" title="Convert this dataframe to an interactive table." style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-3c87d5ea-5b4d-4306-8fcd-138cac0f7593 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-3c87d5ea-5b4d-4306-8fcd-138cac0f7593');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+<div id="df-17b1397d-f904-44c5-b469-474fe49c7505">
+  <button class="colab-df-quickchart" onclick="quickchart('df-17b1397d-f904-44c5-b469-474fe49c7505')" title="Suggest charts" style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path>
+    </g>
+</svg>
+  </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+  <script>
+    async function quickchart(key) {
+      const quickchartButtonEl =
+        document.querySelector('#' + key + ' button');
+      quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+      quickchartButtonEl.classList.add('colab-df-spinner');
+      try {
+        const charts = await google.colab.kernel.invokeFunction(
+            'suggestCharts', [key], {});
+      } catch (error) {
+        console.error('Error during call to suggestCharts:', error);
+      }
+      quickchartButtonEl.classList.remove('colab-df-spinner');
+      quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+    }
+    (() => {
+      let quickchartButtonEl =
+        document.querySelector('#df-17b1397d-f904-44c5-b469-474fe49c7505 button');
+      quickchartButtonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+    })();
+  </script>
+</div>
+
+  <div id="id_fe3ab642-3fbc-44c7-a19e-5293228b9770">
+    <style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+    <button class="colab-df-generate" onclick="generateWithVariable('results_df')" title="Generate code using this dataframe." style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px">
+    <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"></path>
+  </svg>
+    </button>
+    <script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_fe3ab642-3fbc-44c7-a19e-5293228b9770 button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('results_df');
+      }
+      })();
+    </script>
+  </div>
+
+    </div>
+  </div>
+</div>
+</div>
+<div id="cell-24" class="cell" data-outputid="b9b7c45b-481b-4b5a-f8ca-c784011d7047" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Create a FacetGrid with 3 rows and 2 columns</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">12</span>))</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co"># Define metrics to plot</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>metrics <span class="op">=</span> [</span>
+<span id="cb12-6"><a href="#cb12-6"></a>    <span class="st">"Total Time (s)"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7"></a>    <span class="st">"Memory Usage (MB)"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8"></a>    <span class="st">"Parameters"</span>,</span>
+<span id="cb12-9"><a href="#cb12-9"></a>    <span class="st">"Tokens/s"</span>,</span>
+<span id="cb12-10"><a href="#cb12-10"></a>]</span>
+<span id="cb12-11"><a href="#cb12-11"></a></span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="co"># Create facet grid for multiple plots</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a>g <span class="op">=</span> sns.FacetGrid(</span>
+<span id="cb12-14"><a href="#cb12-14"></a>    pd.melt(results_df, id_vars<span class="op">=</span>[<span class="st">"Model"</span>], value_vars<span class="op">=</span>metrics),</span>
+<span id="cb12-15"><a href="#cb12-15"></a>    col_wrap<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb12-16"><a href="#cb12-16"></a>    height<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb12-17"><a href="#cb12-17"></a>    aspect<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb12-18"><a href="#cb12-18"></a>    row<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-19"><a href="#cb12-19"></a>    col<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb12-20"><a href="#cb12-20"></a>    sharex<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb12-21"><a href="#cb12-21"></a>    sharey<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb12-22"><a href="#cb12-22"></a>)</span>
+<span id="cb12-23"><a href="#cb12-23"></a></span>
+<span id="cb12-24"><a href="#cb12-24"></a><span class="co"># Plot bars for each metric</span></span>
+<span id="cb12-25"><a href="#cb12-25"></a>g.map_dataframe(</span>
+<span id="cb12-26"><a href="#cb12-26"></a>    sns.barplot,</span>
+<span id="cb12-27"><a href="#cb12-27"></a>    x<span class="op">=</span><span class="st">"Model"</span>,</span>
+<span id="cb12-28"><a href="#cb12-28"></a>    y<span class="op">=</span><span class="st">"value"</span>,</span>
+<span id="cb12-29"><a href="#cb12-29"></a>    hue<span class="op">=</span><span class="st">"Model"</span>,</span>
+<span id="cb12-30"><a href="#cb12-30"></a>    palette<span class="op">=</span><span class="st">"viridis"</span>,</span>
+<span id="cb12-31"><a href="#cb12-31"></a>)</span>
+<span id="cb12-32"><a href="#cb12-32"></a></span>
+<span id="cb12-33"><a href="#cb12-33"></a><span class="co"># Rotate x-axis labels for better readability</span></span>
+<span id="cb12-34"><a href="#cb12-34"></a><span class="cf">for</span> ax <span class="kw">in</span> g.axes:</span>
+<span id="cb12-35"><a href="#cb12-35"></a>    ax.tick_params(axis<span class="op">=</span><span class="st">"x"</span>, rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb12-36"><a href="#cb12-36"></a></span>
+<span id="cb12-37"><a href="#cb12-37"></a><span class="co"># Adjust layout to prevent overlapping</span></span>
+<span id="cb12-38"><a href="#cb12-38"></a>plt.tight_layout()</span>
+<span id="cb12-39"><a href="#cb12-39"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <pre><code>&lt;Figure size 1200x1200 with 0 Axes&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="head_attention_files/figure-html/cell-11-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="head_attention_files/figure-html/cell-12-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1224,6 +1549,7 @@ STAGE:2025-01-10 23:20:35 47461:3792076 ActivityProfilerController.cpp:324] Comp
 
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -67,6 +67,6 @@
     "href": "content/head_attention.html#references",
     "title": "Attention Mechanisms: Memory-Efficient Techniques and Implementations",
     "section": "References",
-    "text": "References\n\nhttps://arxiv.org/pdf/1706.03762 Transformer\nhttps://arxiv.org/pdf/2405.04434 MLA\nhttps://arxiv.org/pdf/2305.13245v3 GQA"
+    "text": "References\n\nAttention Is All You Need\nDeepSeek-V2\nGQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints\nMQA\nMeta-Llama code\nDeepSeek-V3 code"
   }
 ]

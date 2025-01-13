@@ -1,3 +1,7 @@
+# Blog
+
+Access the blog at [abrarsheikh.dev](https://abrarsheikh.dev).
+
 ## Setup
 
 ```bash

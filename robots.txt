@@ -1,1 +1,1 @@
-Sitemap: https://abrarsheikh.github.io/blog/sitemap.xml
+Sitemap: https://www.abrarsheikh.dev/sitemap.xml

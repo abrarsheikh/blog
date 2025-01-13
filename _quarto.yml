@@ -21,4 +21,3 @@ format:
     toc-depth: 3  # Set depth of the table of contents
     code-fold: false  # Keep all code blocks unfolded
     code-line-numbers: true  # Enable line numbers in code blocks
-    code-block-style: github  # Use GitHub-style code blocks for readability

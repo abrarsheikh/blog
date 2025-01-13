@@ -5,6 +5,7 @@ project:
 
 website:
   title: "blog"
+  google-analytics: "G-8WZNC2WP40"
   navbar:
     left:
       - href: index.qmd

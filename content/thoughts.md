@@ -13,7 +13,7 @@ Next steps
    1. https://minari.farama.org/datasets/D4RL/hammer/expert-v2/
 4. Improve performance
    1. Use full dataset
-   2. Use smaller LR
+   2. Use smaller LR 0.0006
    3. Train for 50 epochs
    4. Increase beam width to 128
    5. Increase beam steps to 15

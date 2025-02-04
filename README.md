@@ -5,6 +5,7 @@
 Clone the repository and install dependencies using Poetry:
 
 ```bash
+pip install poetry
 git clone https://github.com/abrar-sheikh/blog.git
 cd blog
 poetry install

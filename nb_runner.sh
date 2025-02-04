@@ -26,7 +26,7 @@ BASE_NAME=$(basename "$NOTEBOOK_FILE" .ipynb)
 PY_FILE="${OUTPUT_DIR}/${BASE_NAME}.py"
 
 # Convert the notebook to a Python script, placing the output in the same directory.
-jupyter nbconvert --to script --output-dir "$OUTPUT_DIR" "$NOTEBOOK_FILE"
+poetry run jupyter nbconvert --to script --output-dir "$OUTPUT_DIR" "$NOTEBOOK_FILE"
 
 if [ $? -ne 0 ]; then
   echo "Conversion failed."
@@ -43,4 +43,4 @@ fi
 
 # Run the Python script.
 echo "Running ${PY_FILE}..."
-python3 "$PY_FILE"
+poetry run python3 "$PY_FILE"

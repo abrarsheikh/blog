@@ -173,5 +173,5 @@ cython_debug/
 /.quarto/
 /_site/
 .DS_Store
-content/runs/
-content/data
+runs/
+data/

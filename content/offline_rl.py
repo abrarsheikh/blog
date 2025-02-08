@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[2]:
 
 
 import torch
@@ -74,17 +74,17 @@ embedding_dim = 128 if not local else 96
 n_heads = 4 if not local else 4
 n_blocks = 4 if not local else 4
 n_epochs = 50 if not local else 300
-batch_size = 256 if not local else 128
+batch_size = 64 if not local else 128
 use_sep_heads = True
 lr = 0.0006
 weight_decay = 0.1
 betas = (0.9, 0.95)
 clip_grad = 1.0
-eval_every = 10 if not local else 50
+eval_every = 50 if not local else 50
 strategy = "uniform"  # "quantile" or "uniform" for discritization
 
 # other parameters
-n_episodes: Optional[int] = 1000 if not local else 50
+n_episodes: Optional[int] = 100 if not local else 50
 # create a directory to save the model
 base_dir = f"data/{dataset_ref}"
 os.makedirs(base_dir, exist_ok=True)
@@ -93,9 +93,9 @@ load_checkpoint = (
     False  # set to False if you want to train from scratch even if a checkpoint exists
 )
 if n_episodes:
-    m_dataset = base_m_dataset.sample_episodes(n_episodes)
+    m_dataset = base_m_dataset.filter_episodes(lambda ep: any(ep.infos['success']) is True).sample_episodes(n_episodes)
 else:
-    m_dataset = base_m_dataset
+    m_dataset = base_m_dataset.filter_episodes(lambda ep: any(ep.infos['success']) is True)
 
 print(f"Number of episodes: {len(m_dataset)}")
 
@@ -106,7 +106,7 @@ device = torch.device(
 )
 
 
-# In[3]:
+# In[4]:
 
 
 class KBinsDiscretizer:
@@ -224,7 +224,7 @@ class KBinsDiscretizer:
         self.bin_centers_torch = self.bin_centers_torch.to(device)
 
 
-# In[ ]:
+# In[5]:
 
 
 # Test array
@@ -257,7 +257,7 @@ assert np.isclose(
 print("All tests passed successfully.")
 
 
-# In[ ]:
+# In[6]:
 
 
 def flatten_space(s_dict: Any, space: spaces.Space) -> np.ndarray:
@@ -338,7 +338,7 @@ assert np.isclose(
 print("All tests passed successfully.")
 
 
-# In[6]:
+# In[7]:
 
 
 def join_trajectory(env: Env, episode: EpisodeData, discount: float = 0.99):
@@ -482,7 +482,7 @@ class DiscretizeDataset(Dataset):
         return joined_discretized[:-1], joined_discretized[1:], loss_pad_mask[:-1]
 
 
-# In[ ]:
+# In[8]:
 
 
 dataset = DiscretizeDataset(
@@ -765,9 +765,9 @@ class TrajectoryTransformer(nn.Module):
         transition_dim: int,
         n_blocks: int,
         vocab_size: int,
-        dropout_embedding: float = 0.05,
-        attention_dropout: float = 0.05,
-        residual_dropout: float = 0.05,
+        dropout_embedding: float = 0.1,
+        attention_dropout: float = 0.1,
+        residual_dropout: float = 0.1,
         use_sep_heads: bool = False,
     ):
         super().__init__()
@@ -827,7 +827,7 @@ class TrajectoryTransformer(nn.Module):
     def _init_weights(self, module):
         # standard practice in transformer models
         if isinstance(module, (nn.Linear, nn.Embedding)):
-            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            torch.nn.init.xavier_uniform_(module.weight)
             if isinstance(module, (nn.Linear)) and module.bias is not None:
                 torch.nn.init.constant_(module.bias, 0.0)
         elif isinstance(module, nn.LayerNorm):
@@ -1484,6 +1484,7 @@ def calculate_loss(
             torch.ones(value_dim, device=inputs.device) * 1,
         ]
     )
+    # remove the first element from weights because we are starting from the second token
     weights = weights.repeat(n_states)[1:].repeat(inputs.shape[0], 1)
     loss = loss * weights.view(-1)
     # apply the loss pad mask to the loss because we don't want to calculate the loss for padded values
@@ -1554,6 +1555,7 @@ def vec_eval(
     return mean_rewards, std_rewards, done_ratio, end_time - start_time, 0
 
 
+@torch.no_grad()
 def calculate_predictive_accuracy(
     model: nn.Module,
     dataloader: Subset,
@@ -1696,7 +1698,8 @@ def train(
                     f"gradients/{name}", param.grad.cpu().numpy(), epoch
                 )
 
-        if epoch % eval_every == 0:
+        # +1 because this operation is pointless to do for first epoch.
+        if (epoch + 1) % eval_every == 0:
             start_time = time.time()
 
             (
@@ -1711,8 +1714,8 @@ def train(
                 discretizer,
                 num_episodes=5 if not local else 1,
                 beam_width=128 if not local else 2,
-                beam_steps=15 if not local else 2,
-                beam_context=5 if not local else 2,
+                beam_steps=5 if not local else 2,
+                beam_context=2 if not local else 2,
                 sample_expansion=2 if not local else 1,
                 observation_dim=observation_dim,
                 action_dim=action_dim,
@@ -1721,8 +1724,8 @@ def train(
                 transition_dim=transition_dim,
                 plan_every=1 if not local else 2,
                 obs_top_k=1,
-                act_top_k=1,
-                rew_top_k=None,
+                act_top_k=None,
+                rew_top_k=1,
                 temperature=1.0,
                 greedy=False,
                 device=device,
@@ -1859,8 +1862,8 @@ else:
     transition_dim=transition_dim,
     plan_every=2 if not local else 1,
     obs_top_k=1,
-    act_top_k=1,
-    rew_top_k=None,
+    act_top_k=None,
+    rew_top_k=1,
     temperature=1.0,
     greedy=False,
     device=device,

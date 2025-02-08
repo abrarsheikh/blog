@@ -24,6 +24,8 @@ Next steps
    10. [Done] increasse capacity of MLP - failed
    11. [Done] state not being handled in offsets - bug fix
    12. [Done] Include terminals in dataset - helped
-   13. investigate why LR is not changing
-   14. Test out on prod
+   13. investigate why LR is not changing - its changing
+   14. fix gym version
+   15. Add no grad to predictive accuracy
+   16. Test out on prod
 5. Write blog

@@ -9,6 +9,10 @@ website:
     left:
       - href: index.qmd
         text: Home
+    right:
+      - href: https://github.com/abrarsheikh
+        text: Github
+  search: true  # Enables search functionality
 
 execute:
   freeze: auto
@@ -24,3 +28,4 @@ format:
     toc-depth: 3  # Set depth of the table of contents
     code-fold: false  # Keep all code blocks unfolded
     code-line-numbers: true  # Enable line numbers in code blocks
+    number-sections: true

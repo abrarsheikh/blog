@@ -17,7 +17,8 @@ format:
   html:
     math: katex  # Use KaTeX for LaTeX math rendering
     theme:
-      - cosmo    # Apply the Cosmo theme for a clean look
+      - cyborg
+    highlight-style: github
     css: styles.css  # Include custom CSS for further customization
     toc: true  # Enable table of contents
     toc-depth: 3  # Set depth of the table of contents

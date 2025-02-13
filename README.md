@@ -1,19 +1,53 @@
-# Blog Project
+# Blog
+
+Access the blog at [abrarsheikh.dev](https://abrarsheikh.dev).
 
 ## Setup
 
-Clone the repository and install dependencies using Poetry:
+Setup pyenv
+
+mac
+```bash
+brew update  
+brew install pyenv 
+```
+
+linux
+```bash
+curl https://pyenv.run | bash 
+```
+
+Then, add the following lines to your shell configuration file (~/.bashrc, ~/.zshrc, or ~/.bash_profile):
+```bash
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv virtualenv-init -)"
+```
+
+Reload the shell:
+```bash
+exec "$SHELL"
+```
+
+install py3.11
+```bash
+pyenv install 3.11
+```
+
+Clone the repository and install dependencies:
 
 ```bash
 pip install poetry
 git clone https://github.com/abrar-sheikh/blog.git
 cd blog
+pyenv local 3.11
 poetry install
 ```
 
 ## Running the Project
 
-You can run the project in two ways:
+There are multiple projects in this repo, you can run a project in two ways:
 
 ### Interactive Development (Recommended)
 
@@ -37,7 +71,7 @@ Run long-running notebooks in the background via the command line:
 ./nb_runner.sh content/<notebook_filename>
 ```
 
-### Preview
+### Preview blog
 
 To preview the blog locally:
 

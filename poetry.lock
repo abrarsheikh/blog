@@ -2604,6 +2604,27 @@ files = [
 ]
 
 [[package]]
+name = "lazy-loader"
+version = "0.4"
+description = "Makes it easy to load subpackages and functions on demand."
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+markers = "python_version == \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "lazy_loader-0.4-py3-none-any.whl", hash = "sha256:342aa8e14d543a154047afb4ba8ef17f5563baad3fc610d7b15b213b0f119efc"},
+    {file = "lazy_loader-0.4.tar.gz", hash = "sha256:47c75182589b91a4e1a85a136c074285a5ad4d9f39c63e0d7fb76391c4574cd1"},
+]
+
+[package.dependencies]
+packaging = "*"
+
+[package.extras]
+dev = ["changelist (==0.5)"]
+lint = ["pre-commit (==3.7.0)"]
+test = ["pytest (>=7.4)", "pytest-cov (>=4.1)"]
+
+[[package]]
 name = "libclang"
 version = "18.1.1"
 description = "Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/main/clang/bindings/python, to make the installation process easier."
@@ -3433,6 +3454,27 @@ files = [
     {file = "numpy-2.0.2-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:a46288ec55ebbd58947d31d72be2c63cbf839f0a63b49cb755022310792a3385"},
     {file = "numpy-2.0.2.tar.gz", hash = "sha256:883c987dee1880e2a864ab0dc9892292582510604156762362d9326444636e78"},
 ]
+
+[[package]]
+name = "numpy-stl"
+version = "3.2.0"
+description = "Library to make reading, writing and modifying both binary and ascii STL files easy."
+optional = false
+python-versions = ">3.9.0"
+groups = ["main"]
+markers = "python_version == \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "numpy_stl-3.2.0-py3-none-any.whl", hash = "sha256:697c81b107231362460aaedf4647e81ba54f54f59c896772fea7904c9c439da5"},
+    {file = "numpy_stl-3.2.0.tar.gz", hash = "sha256:5a20c3f79cddaa0abc6a4b99f5486aceed4f88152f29b19a57acc844e183fd4d"},
+]
+
+[package.dependencies]
+numpy = "*"
+python-utils = ">=3.4.5"
+
+[package.extras]
+docs = ["mock", "python-utils", "sphinx"]
+tests = ["Sphinx", "cov-core", "coverage", "cython", "docutils", "execnet", "flake8", "numpy", "pep8", "py", "pyflakes", "pytest", "pytest-cache", "pytest-cov", "python-utils", "wheel"]
 
 [[package]]
 name = "nvidia-cublas-cu12"
@@ -4399,6 +4441,26 @@ files = [
 ]
 
 [[package]]
+name = "pydicom"
+version = "3.0.1"
+description = "A pure Python package for reading and writing DICOM data"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version == \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "pydicom-3.0.1-py3-none-any.whl", hash = "sha256:db32f78b2641bd7972096b8289111ddab01fb221610de8d7afa835eb938adb41"},
+    {file = "pydicom-3.0.1.tar.gz", hash = "sha256:7b8be344b5b62493c9452ba6f5a299f78f8a6ab79786c729b0613698209603ec"},
+]
+
+[package.extras]
+basic = ["numpy", "types-pydicom"]
+dev = ["black (==24.8.0)", "mypy (==1.11.2)", "pre-commit", "pydicom-data", "pytest", "pytest-cov", "ruff (==0.6.3)", "types-requests"]
+docs = ["matplotlib", "numpy", "numpydoc", "pillow", "sphinx", "sphinx-copybutton", "sphinx-gallery", "sphinx_rtd_theme", "sphinxcontrib-jquery", "sphinxcontrib-napoleon"]
+gpl-license = ["pylibjpeg[libjpeg]"]
+pixeldata = ["numpy", "pillow", "pyjpegls", "pylibjpeg[openjpeg]", "pylibjpeg[rle]", "python-gdcm"]
+
+[[package]]
 name = "pygame"
 version = "2.6.1"
 description = "Python Game Development"
@@ -4564,6 +4626,27 @@ text-unidecode = ">=1.3"
 
 [package.extras]
 unidecode = ["Unidecode (>=1.1.1)"]
+
+[[package]]
+name = "python-utils"
+version = "3.9.1"
+description = "Python Utils is a module with some convenient utilities not included with the standard Python install"
+optional = false
+python-versions = ">=3.9.0"
+groups = ["main"]
+markers = "python_version == \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "python_utils-3.9.1-py2.py3-none-any.whl", hash = "sha256:0273d7363c7ad4b70999b2791d5ba6b55333d6f7a4e4c8b6b39fb82b5fab4613"},
+    {file = "python_utils-3.9.1.tar.gz", hash = "sha256:eb574b4292415eb230f094cbf50ab5ef36e3579b8f09e9f2ba74af70891449a0"},
+]
+
+[package.dependencies]
+typing_extensions = ">3.10.0.2"
+
+[package.extras]
+docs = ["mock", "python-utils", "sphinx"]
+loguru = ["loguru"]
+tests = ["blessings", "loguru", "loguru-mypy", "mypy-ipython", "pyright", "pytest", "pytest-asyncio", "pytest-cov", "pytest-mypy", "ruff", "sphinx", "types-setuptools"]
 
 [[package]]
 name = "pytorch-lightning"
@@ -5061,6 +5144,56 @@ files = [
 
 [package.dependencies]
 pyasn1 = ">=0.1.3"
+
+[[package]]
+name = "scikit-image"
+version = "0.25.1"
+description = "Image processing in Python"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version == \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "scikit_image-0.25.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:40763a3a089617e6f00f92d46b3475368b9783588a165c2aa854da95b66bb4ff"},
+    {file = "scikit_image-0.25.1-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:7c6b69f33e5512ee7fc53361b064430f146583f08dc75317667e81d5f8fcd0c6"},
+    {file = "scikit_image-0.25.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d9187347d115776ff0ddba3e5d2a04638d291b1a62e3c315d17b71eea351cde8"},
+    {file = "scikit_image-0.25.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cdfca713979ad1873a4b55d94bb1eb4bc713f0c10165b261bf6f7e606f44a00c"},
+    {file = "scikit_image-0.25.1-cp310-cp310-win_amd64.whl", hash = "sha256:167fb146de80bb2a1493d1a760a9ac81644a8a5de254c3dd12a95d1b662d819c"},
+    {file = "scikit_image-0.25.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:c1bde2d5f1dfb23b3c72ef9fcdb2dd5f42fa353e8bd606aea63590eba5e79565"},
+    {file = "scikit_image-0.25.1-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:5112d95cccaa45c434e57efc20c1f721ab439e516e2ed49709ddc2afb7c15c70"},
+    {file = "scikit_image-0.25.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0f5e313b028f5d7a9f3888ad825ddf4fb78913d7762891abb267b99244b4dd31"},
+    {file = "scikit_image-0.25.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:39ad76aeff754048dabaff83db752aa0655dee425f006678d14485471bdb459d"},
+    {file = "scikit_image-0.25.1-cp311-cp311-win_amd64.whl", hash = "sha256:8dc8b06176c1a2316fa8bc539fd7e96155721628ae5cf51bc1a2c62cb9786581"},
+    {file = "scikit_image-0.25.1-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:ebf83699d60134909647395a0bf07db3859646de7192b088e656deda6bc15e95"},
+    {file = "scikit_image-0.25.1-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:408086520eed036340e634ab7e4f648e00238f711bac61ab933efeb11464a238"},
+    {file = "scikit_image-0.25.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5bd709faa87795869ccd21f32490c37989ca5846571495822f4b9430fb42c34c"},
+    {file = "scikit_image-0.25.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a6b15c0265c072a46ff4720784d756d8f8e5d63567639aa8451f6673994d6846"},
+    {file = "scikit_image-0.25.1-cp312-cp312-win_amd64.whl", hash = "sha256:a689a0d091e0bd97d7767309abdeb27c43be210d075abb34e71657add920c22b"},
+    {file = "scikit_image-0.25.1-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:f070f899d6572a125ab106c4b26d1a5fb784dc60ba6dea45c7816f08c3a4fb4d"},
+    {file = "scikit_image-0.25.1-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:cc9538d8db7670878aa68ea79c0b1796b6c771085e8d50f5408ee617da3281b6"},
+    {file = "scikit_image-0.25.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:caa08d4fa851e1f421fcad8eac24d32f2810971dc61f1d72dc950ca9e9ec39b1"},
+    {file = "scikit_image-0.25.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c9923aa898b7921fbcf503d32574d48ed937a7cff45ce8587be4868b39676e18"},
+    {file = "scikit_image-0.25.1-cp313-cp313-win_amd64.whl", hash = "sha256:6c7bba6773ab8c39ee8b1cbb17c7f98965bacdb8cd8da337942be6acc38fc562"},
+    {file = "scikit_image-0.25.1.tar.gz", hash = "sha256:d4ab30540d114d37c35fe5c837f89b94aaba2a7643afae8354aa353319e9bbbb"},
+]
+
+[package.dependencies]
+imageio = ">=2.33,<2.35.0 || >2.35.0"
+lazy-loader = ">=0.4"
+networkx = ">=3.0"
+numpy = ">=1.24"
+packaging = ">=21"
+pillow = ">=10.1"
+scipy = ">=1.11.2"
+tifffile = ">=2022.8.12"
+
+[package.extras]
+build = ["Cython (>=3.0.8)", "build (>=1.2.1)", "meson-python (>=0.16)", "ninja (>=1.11.1.1)", "numpy (>=2.0)", "pythran (>=0.16)", "setuptools (>=68)", "spin (==0.13)"]
+data = ["pooch (>=1.6.0)"]
+developer = ["ipython", "pre-commit", "tomli"]
+docs = ["PyWavelets (>=1.6)", "dask[array] (>=2022.9.2)", "intersphinx-registry (>=0.2411.14)", "ipykernel", "ipywidgets", "kaleido (==0.2.1)", "matplotlib (>=3.7)", "myst-parser", "numpydoc (>=1.7)", "pandas (>=2.0)", "plotly (>=5.20)", "pooch (>=1.6)", "pydata-sphinx-theme (>=0.16)", "pytest-doctestplus", "scikit-learn (>=1.2)", "seaborn (>=0.11)", "sphinx (>=8.0)", "sphinx-copybutton", "sphinx-gallery[parallel] (>=0.18)", "sphinx_design (>=0.5)", "tifffile (>=2022.8.12)"]
+optional = ["PyWavelets (>=1.6)", "SimpleITK", "astropy (>=5.0)", "cloudpickle (>=0.2.1)", "dask[array] (>=2021.1.0,!=2024.8.0)", "matplotlib (>=3.7)", "pooch (>=1.6.0)", "pyamg (>=5.2)", "scikit-learn (>=1.2)"]
+test = ["asv", "numpydoc (>=1.7)", "pooch (>=1.6.0)", "pytest (>=7.0)", "pytest-cov (>=2.11.0)", "pytest-doctestplus", "pytest-faulthandler", "pytest-localserver"]
 
 [[package]]
 name = "scikit-learn"
@@ -5590,6 +5723,30 @@ files = [
 ]
 
 [[package]]
+name = "tifffile"
+version = "2025.1.10"
+description = "Read and write TIFF files"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version == \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "tifffile-2025.1.10-py3-none-any.whl", hash = "sha256:ed24cf4c99fb13b4f5fb29f8a0d5605e60558c950bccbdca2a6470732a27cfb3"},
+    {file = "tifffile-2025.1.10.tar.gz", hash = "sha256:baaf0a3b87bf7ec375fa1537503353f70497eabe1bdde590f2e41cc0346e612f"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[package.extras]
+all = ["defusedxml", "fsspec", "imagecodecs (>=2024.12.30)", "lxml", "matplotlib", "zarr (<3)"]
+codecs = ["imagecodecs (>=2024.12.30)"]
+plot = ["matplotlib"]
+test = ["cmapfile", "czifile", "dask", "defusedxml", "fsspec", "imagecodecs", "lfdfiles", "lxml", "ndtiff", "oiffile", "psdtags", "pytest", "roifile", "xarray", "zarr (<3)"]
+xml = ["defusedxml", "lxml"]
+zarr = ["fsspec", "zarr (<3)"]
+
+[[package]]
 name = "tinycss2"
 version = "1.4.0"
 description = "A tiny CSS parser"
@@ -6080,6 +6237,47 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "vtk"
+version = "9.4.1"
+description = "VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization"
+optional = false
+python-versions = "*"
+groups = ["main"]
+markers = "python_version == \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "vtk-9.4.1-cp310-cp310-macosx_10_10_x86_64.whl", hash = "sha256:37bcde65ffcf0f427ebf71c9d77f0c6efc7dbc57f1fe7d2fb904730d89ddf159"},
+    {file = "vtk-9.4.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:950130df308043359c42c8ef7e2d5df55a7ba9baf60e544b304e8c46ab606979"},
+    {file = "vtk-9.4.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8e833ddfe9879807ddf8c7a66fedfc23004bafd2f0e243484aaa37be6392df2d"},
+    {file = "vtk-9.4.1-cp310-cp310-win_amd64.whl", hash = "sha256:0bdd18f0c0c72ec2753b8f06466352d17a9246f85955eb0893874829f50b4614"},
+    {file = "vtk-9.4.1-cp311-cp311-macosx_10_10_x86_64.whl", hash = "sha256:81d548223811fc40570b1a97a788b9d16ef782fafead5d4d6c3ec71e48346962"},
+    {file = "vtk-9.4.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:dc6997d7b250f9ea1108b2b83237faa3f7c5bfcb6277b69ea92b1fdc46bc7140"},
+    {file = "vtk-9.4.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cad713bed5004b68dfb9d46873aac15df9af827796d2a6f0fcafaea9ae2a3989"},
+    {file = "vtk-9.4.1-cp311-cp311-win_amd64.whl", hash = "sha256:fefc2caf74f3444490ed806053912e18cbc5d0a5a2b5d02fddff16fe31b8ea3a"},
+    {file = "vtk-9.4.1-cp312-cp312-macosx_10_10_x86_64.whl", hash = "sha256:0ba2e5782fa789d39bfe157f67e147693bec89d2e33184952bea1ef8ede16141"},
+    {file = "vtk-9.4.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:0a8427dbaa3248a5629d3cd20af8d1f99c89e7ed58b9b03b8eda2a98d0c3bd98"},
+    {file = "vtk-9.4.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9d14573192ef90cefe040768e3ebf3c42810e4ed120794794067cd217686812f"},
+    {file = "vtk-9.4.1-cp312-cp312-win_amd64.whl", hash = "sha256:4dc25985b8be5f3fa0a9f4d6d7acf570eb4174bef3f38e28c8071a9d85588fb2"},
+    {file = "vtk-9.4.1-cp313-cp313-macosx_10_10_x86_64.whl", hash = "sha256:62799051c11dcffd6602eee2bbe5044399dd660fd5da01c516722409e3efdcc9"},
+    {file = "vtk-9.4.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:d96c5c56947e73d133878beab8b5a64cab4f1417840e19ce379c733de976ec77"},
+    {file = "vtk-9.4.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4710e29b38f569f3f4ab2bbd9672c13c5f506a8bb774bed122d4f4ae5d5462dd"},
+    {file = "vtk-9.4.1-cp313-cp313-win_amd64.whl", hash = "sha256:852690a80c10775aa29399c0be2dba65f0a5f3de480244fef7920968a69c960b"},
+    {file = "vtk-9.4.1-cp38-cp38-macosx_10_10_x86_64.whl", hash = "sha256:5852cc27ac33b21040e6531dd0f8479e25898dc6c5665c0028e72e8f2afb99f7"},
+    {file = "vtk-9.4.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e3d87afa49d54eb775cb43e1375c24d1666a6b244080d44a8242091aa567b858"},
+    {file = "vtk-9.4.1-cp38-cp38-win_amd64.whl", hash = "sha256:0854c33ae411b14f359d7ab7e5c9e400985ff430b0171e12455a772824049f19"},
+    {file = "vtk-9.4.1-cp39-cp39-macosx_10_10_x86_64.whl", hash = "sha256:f7219822a1a88f9f50710d2f8874dad533fcc92165657f2bb071a9771b63b651"},
+    {file = "vtk-9.4.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:f396dde48665702df2514ebe8284e43e35cf68590bdab55b1001fd52ce52e7bf"},
+    {file = "vtk-9.4.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fa9b5e0af140c2e9bac1f59688ee0996780c2f0f581de00169e4f50116328221"},
+    {file = "vtk-9.4.1-cp39-cp39-win_amd64.whl", hash = "sha256:bb84306ffd48ee93fd785334c93687ef3590a737fa242e4d46148c58ed6c4860"},
+]
+
+[package.dependencies]
+matplotlib = ">=2.0.0"
+
+[package.extras]
+numpy = ["numpy (>=1.9)"]
+web = ["wslink (>=1.0.4)"]
+
+[[package]]
 name = "wcwidth"
 version = "0.2.13"
 description = "Measures the displayed width of unicode strings in a terminal"
@@ -6554,4 +6752,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "ff0fc479c1ad50dce20c2d0efc40b9aa8b6be62b920c46713f8868ef7c716fc1"
+content-hash = "085e3619347ff2b6112ecdd7bd68c8cdcb7fd9f35f0c1b4aa534cf54506243b9"

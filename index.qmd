@@ -2,7 +2,7 @@
 title: "Welcome to My Blog"
 listing:
   contents: "content"
-  sort: "date-desc"
+  sort: "date desc"
   type: default
   categories: true
   sort-ui: true

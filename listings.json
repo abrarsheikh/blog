@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/content/offline_rl.html",
       "/content/head_attention.html"
     ]
   }

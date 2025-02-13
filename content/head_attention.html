@@ -70,10 +70,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-31203b635be0d1e0e0f8e50f4e183f41.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -101,6 +101,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-8WZNC2WP40"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8WZNC2WP40', { 'anonymize_ip': true});
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
@@ -160,6 +169,12 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
 </ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/abrarsheikh"> 
+<span class="menu-text">Github</span></a>
+  </li>  
+</ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
@@ -175,35 +190,35 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#attention-mechanisms-memory-efficient-techniques-and-implementations" id="toc-attention-mechanisms-memory-efficient-techniques-and-implementations" class="nav-link active" data-scroll-target="#attention-mechanisms-memory-efficient-techniques-and-implementations">Attention Mechanisms: Memory-Efficient Techniques and Implementations</a>
+  <li><a href="#attention-mechanisms-memory-efficient-techniques-and-implementations" id="toc-attention-mechanisms-memory-efficient-techniques-and-implementations" class="nav-link active" data-scroll-target="#attention-mechanisms-memory-efficient-techniques-and-implementations"><span class="header-section-number">1</span> Attention Mechanisms: Memory-Efficient Techniques and Implementations</a>
   <ul class="collapse">
-  <li><a href="#word-of-caution" id="toc-word-of-caution" class="nav-link" data-scroll-target="#word-of-caution">Word of Caution</a></li>
-  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention">Multi-Head Attention</a></li>
-  <li><a href="#multi-head-attention-with-kv-cache" id="toc-multi-head-attention-with-kv-cache" class="nav-link" data-scroll-target="#multi-head-attention-with-kv-cache">Multi-Head Attention with KV Cache</a>
+  <li><a href="#word-of-caution" id="toc-word-of-caution" class="nav-link" data-scroll-target="#word-of-caution"><span class="header-section-number">1.0.1</span> Word of Caution</a></li>
+  <li><a href="#multi-head-attention" id="toc-multi-head-attention" class="nav-link" data-scroll-target="#multi-head-attention"><span class="header-section-number">1.1</span> Multi-Head Attention</a></li>
+  <li><a href="#multi-head-attention-with-kv-cache" id="toc-multi-head-attention-with-kv-cache" class="nav-link" data-scroll-target="#multi-head-attention-with-kv-cache"><span class="header-section-number">1.2</span> Multi-Head Attention with KV Cache</a>
   <ul class="collapse">
-  <li><a href="#key-differences-and-modifications" id="toc-key-differences-and-modifications" class="nav-link" data-scroll-target="#key-differences-and-modifications">Key Differences and Modifications</a></li>
-  <li><a href="#efficiency" id="toc-efficiency" class="nav-link" data-scroll-target="#efficiency">Efficiency</a></li>
+  <li><a href="#key-differences-and-modifications" id="toc-key-differences-and-modifications" class="nav-link" data-scroll-target="#key-differences-and-modifications"><span class="header-section-number">1.2.1</span> Key Differences and Modifications</a></li>
+  <li><a href="#efficiency" id="toc-efficiency" class="nav-link" data-scroll-target="#efficiency"><span class="header-section-number">1.2.2</span> Efficiency</a></li>
   </ul></li>
-  <li><a href="#group-query-attention-with-kv-cache" id="toc-group-query-attention-with-kv-cache" class="nav-link" data-scroll-target="#group-query-attention-with-kv-cache">Group Query Attention with KV Cache</a>
+  <li><a href="#group-query-attention-with-kv-cache" id="toc-group-query-attention-with-kv-cache" class="nav-link" data-scroll-target="#group-query-attention-with-kv-cache"><span class="header-section-number">1.3</span> Group Query Attention with KV Cache</a>
   <ul class="collapse">
-  <li><a href="#key-differences-and-modifications-1" id="toc-key-differences-and-modifications-1" class="nav-link" data-scroll-target="#key-differences-and-modifications-1">Key Differences and Modifications</a></li>
+  <li><a href="#key-differences-and-modifications-1" id="toc-key-differences-and-modifications-1" class="nav-link" data-scroll-target="#key-differences-and-modifications-1"><span class="header-section-number">1.3.1</span> Key Differences and Modifications</a></li>
   </ul></li>
-  <li><a href="#multi-head-latent-attention-mla" id="toc-multi-head-latent-attention-mla" class="nav-link" data-scroll-target="#multi-head-latent-attention-mla">Multi-Head Latent Attention (MLA)</a></li>
-  <li><a href="#memory-usage-comparison" id="toc-memory-usage-comparison" class="nav-link" data-scroll-target="#memory-usage-comparison">Memory Usage Comparison</a>
+  <li><a href="#multi-head-latent-attention-mla" id="toc-multi-head-latent-attention-mla" class="nav-link" data-scroll-target="#multi-head-latent-attention-mla"><span class="header-section-number">1.4</span> Multi-Head Latent Attention (MLA)</a></li>
+  <li><a href="#memory-usage-comparison" id="toc-memory-usage-comparison" class="nav-link" data-scroll-target="#memory-usage-comparison"><span class="header-section-number">1.5</span> Memory Usage Comparison</a>
   <ul class="collapse">
-  <li><a href="#memory-comparison" id="toc-memory-comparison" class="nav-link" data-scroll-target="#memory-comparison">Memory Comparison</a></li>
+  <li><a href="#memory-comparison" id="toc-memory-comparison" class="nav-link" data-scroll-target="#memory-comparison"><span class="header-section-number">1.5.1</span> Memory Comparison</a></li>
   </ul></li>
-  <li><a href="#experiments" id="toc-experiments" class="nav-link" data-scroll-target="#experiments">Experiments</a></li>
-  <li><a href="#observations" id="toc-observations" class="nav-link" data-scroll-target="#observations">Observations</a>
+  <li><a href="#experiments" id="toc-experiments" class="nav-link" data-scroll-target="#experiments"><span class="header-section-number">1.6</span> Experiments</a></li>
+  <li><a href="#observations" id="toc-observations" class="nav-link" data-scroll-target="#observations"><span class="header-section-number">1.7</span> Observations</a>
   <ul class="collapse">
-  <li><a href="#number-of-parameters" id="toc-number-of-parameters" class="nav-link" data-scroll-target="#number-of-parameters">1. Number of Parameters</a></li>
-  <li><a href="#memory-usage" id="toc-memory-usage" class="nav-link" data-scroll-target="#memory-usage">2. Memory Usage</a></li>
-  <li><a href="#throughput-tokenss" id="toc-throughput-tokenss" class="nav-link" data-scroll-target="#throughput-tokenss">3. Throughput (Tokens/s)</a></li>
-  <li><a href="#mlas-advantages-over-mha" id="toc-mlas-advantages-over-mha" class="nav-link" data-scroll-target="#mlas-advantages-over-mha">4. MLA’s Advantages Over MHA</a></li>
-  <li><a href="#trade-offs-between-models" id="toc-trade-offs-between-models" class="nav-link" data-scroll-target="#trade-offs-between-models">5. Trade-offs Between Models</a></li>
-  <li><a href="#additional-consideration" id="toc-additional-consideration" class="nav-link" data-scroll-target="#additional-consideration">Additional Consideration</a></li>
+  <li><a href="#number-of-parameters" id="toc-number-of-parameters" class="nav-link" data-scroll-target="#number-of-parameters"><span class="header-section-number">1.7.1</span> 1. Number of Parameters</a></li>
+  <li><a href="#memory-usage" id="toc-memory-usage" class="nav-link" data-scroll-target="#memory-usage"><span class="header-section-number">1.7.2</span> 2. Memory Usage</a></li>
+  <li><a href="#throughput-tokenss" id="toc-throughput-tokenss" class="nav-link" data-scroll-target="#throughput-tokenss"><span class="header-section-number">1.7.3</span> 3. Throughput (Tokens/s)</a></li>
+  <li><a href="#mlas-advantages-over-mha" id="toc-mlas-advantages-over-mha" class="nav-link" data-scroll-target="#mlas-advantages-over-mha"><span class="header-section-number">1.7.4</span> 4. MLA’s Advantages Over MHA</a></li>
+  <li><a href="#trade-offs-between-models" id="toc-trade-offs-between-models" class="nav-link" data-scroll-target="#trade-offs-between-models"><span class="header-section-number">1.7.5</span> 5. Trade-offs Between Models</a></li>
+  <li><a href="#additional-consideration" id="toc-additional-consideration" class="nav-link" data-scroll-target="#additional-consideration"><span class="header-section-number">1.7.6</span> Additional Consideration</a></li>
   </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">1.8</span> References</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -249,13 +264,13 @@ window.Quarto = {
 <span id="cb1-7"><a href="#cb1-7"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-8"><a href="#cb1-8"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="attention-mechanisms-memory-efficient-techniques-and-implementations" class="level1">
-<h1>Attention Mechanisms: Memory-Efficient Techniques and Implementations</h1>
+<section id="attention-mechanisms-memory-efficient-techniques-and-implementations" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Attention Mechanisms: Memory-Efficient Techniques and Implementations</h1>
 <p>In this notebook, we explore various attention mechanisms used in deep learning, focusing on their memory usage and efficiency. We begin with a fundamental comparison between Multi-Head Attention (MHA) and Group Query Attention, highlighting how the latter reduces memory requirements by sharing key-value matrices across multiple query heads.</p>
 <p>We then delve into the concept of Multi-Query Attention, which further optimizes memory by using a single key-value matrix for all query heads. To take memory efficiency to the next level, we introduce Multi-Head Latent Attention (MLA), a technique that compresses the key-value matrices into a lower-dimensional latent space, drastically reducing memory usage while maintaining the ability to compute attention.</p>
 <p>Throughout the notebook, we provide detailed explanations of these techniques, including their memory usage formulas, followed by Python implementations of each attention mechanism to demonstrate their practical applications. The goal is to provide both theoretical insights and hands-on experience in optimizing attention mechanisms for large-scale models.</p>
-<section id="word-of-caution" class="level3">
-<h3 class="anchored" data-anchor-id="word-of-caution">Word of Caution</h3>
+<section id="word-of-caution" class="level3" data-number="1.0.1">
+<h3 data-number="1.0.1" class="anchored" data-anchor-id="word-of-caution"><span class="header-section-number">1.0.1</span> Word of Caution</h3>
 <ul>
 <li>Self-Learning Tool: This notebook is primarily a personal self-learning resource. As a hobbyist passionate about learning and sharing, I’ve put this together to better understand and experiment with various attention mechanisms. The explanations and code are meant to be accessible to those interested in the same journey.</li>
 <li>Performance Not Optimized: The implementations provided here are not optimized for production-level performance. For example, real-world applications typically use optimized libraries like Flash Attention, but in this notebook, the focus is on simplicity and clarity. The code is written to be easily understandable, not for efficiency at scale.</li>
@@ -267,8 +282,8 @@ window.Quarto = {
 <span id="cb2-2"><a href="#cb2-2"></a>MAX_SEQ_LEN <span class="op">=</span> <span class="dv">128</span> <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available() <span class="cf">else</span> <span class="dv">2048</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="multi-head-attention" class="level2">
-<h2 class="anchored" data-anchor-id="multi-head-attention">Multi-Head Attention</h2>
+<section id="multi-head-attention" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="multi-head-attention"><span class="header-section-number">1.1</span> Multi-Head Attention</h2>
 <p>Multi-Head Attention is a core component of transformer models that allows the model to focus on different parts of the input sequence simultaneously. It involves multiple attention heads, each computing scaled dot-product attention independently, followed by a concatenation of the results and a final linear transformation.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -276,8 +291,8 @@ window.Quarto = {
 <figcaption>MHA</figcaption>
 </figure>
 </div>
-<section id="input-transformation" class="level4">
-<h4 class="anchored" data-anchor-id="input-transformation">1. Input Transformation:</h4>
+<section id="input-transformation" class="level4" data-number="1.1.0.1">
+<h4 data-number="1.1.0.1" class="anchored" data-anchor-id="input-transformation"><span class="header-section-number">1.1.0.1</span> 1. Input Transformation:</h4>
 <p>For an input sequence <span class="math inline">\(X \in \mathbb{R}^{T \times d_{\text{model}}}\)</span>, where <span class="math inline">\(T\)</span> is the sequence length and <span class="math inline">\(d_{\text{model}}\)</span> is the model’s hidden size, the inputs are transformed into query, key, and value matrices:</p>
 <p><span class="math display">\[
 Q = X W_Q, \quad K = X W_K, \quad V = X W_V
@@ -288,8 +303,8 @@ Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 <li><span class="math inline">\(Q, K, V \in \mathbb{R}^{T \times d_k}\)</span></li>
 </ul>
 </section>
-<section id="scaled-dot-product-attention" class="level4">
-<h4 class="anchored" data-anchor-id="scaled-dot-product-attention">2. Scaled Dot-Product Attention:</h4>
+<section id="scaled-dot-product-attention" class="level4" data-number="1.1.0.2">
+<h4 data-number="1.1.0.2" class="anchored" data-anchor-id="scaled-dot-product-attention"><span class="header-section-number">1.1.0.2</span> 2. Scaled Dot-Product Attention:</h4>
 <p>For a single attention head, attention scores are computed as:</p>
 <p><span class="math display">\[
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}}\right)V
@@ -301,8 +316,8 @@ Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 <li><span class="math inline">\(\text{softmax}(\cdot)\)</span> normalizes the scores across the sequence.</li>
 </ul>
 </section>
-<section id="multi-head-attention-1" class="level4">
-<h4 class="anchored" data-anchor-id="multi-head-attention-1">3. Multi-Head Attention:</h4>
+<section id="multi-head-attention-1" class="level4" data-number="1.1.0.3">
+<h4 data-number="1.1.0.3" class="anchored" data-anchor-id="multi-head-attention-1"><span class="header-section-number">1.1.0.3</span> 3. Multi-Head Attention:</h4>
 <p>Splitting <span class="math inline">\(d_{\text{model}}\)</span> into multiple heads in Multi-Head Attention allows the model to focus on different parts of the input sequence simultaneously. Each attention head operates on a subset of the dimensions (<span class="math inline">\(d_k = d_{\text{model}} / h\)</span>), enabling the model to capture diverse patterns or relationships in the data, such as local and global dependencies.</p>
 <p>This parallel processing improves the expressiveness of the attention mechanism, allowing it to learn richer representations compared to a single attention head. By combining the outputs of all heads, the model integrates these diverse perspectives into a more comprehensive understanding of the input.</p>
 <p>Instead of using a single attention head, multiple heads are used. Each head has its own projection matrices <span class="math inline">\(W_Q^i, W_K^i, W_V^i\)</span> and computes attention independently:</p>
@@ -371,8 +386,8 @@ Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 </div>
 </section>
 </section>
-<section id="multi-head-attention-with-kv-cache" class="level2">
-<h2 class="anchored" data-anchor-id="multi-head-attention-with-kv-cache">Multi-Head Attention with KV Cache</h2>
+<section id="multi-head-attention-with-kv-cache" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="multi-head-attention-with-kv-cache"><span class="header-section-number">1.2</span> Multi-Head Attention with KV Cache</h2>
 <p>Multi-Head Attention with KV Cache is an optimization technique used in transformer models to improve efficiency during autoregressive tasks, such as language generation. Instead of recomputing the key (<span class="math inline">\(K\)</span>) and value (<span class="math inline">\(V\)</span>) matrices for all tokens in the sequence at each step, previously computed <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> are cached and reused.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -380,26 +395,26 @@ Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 <figcaption>KV Cache</figcaption>
 </figure>
 </div>
-<section id="key-differences-and-modifications" class="level3">
-<h3 class="anchored" data-anchor-id="key-differences-and-modifications">Key Differences and Modifications</h3>
-<section id="caching-keys-and-values" class="level4">
-<h4 class="anchored" data-anchor-id="caching-keys-and-values">Caching Keys and Values</h4>
+<section id="key-differences-and-modifications" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="key-differences-and-modifications"><span class="header-section-number">1.2.1</span> Key Differences and Modifications</h3>
+<section id="caching-keys-and-values" class="level4" data-number="1.2.1.1">
+<h4 data-number="1.2.1.1" class="anchored" data-anchor-id="caching-keys-and-values"><span class="header-section-number">1.2.1.1</span> Caching Keys and Values</h4>
 <p>In standard Multi-Head Attention, <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> are recomputed for the entire input sequence. With KV caching, only the new token’s query (<span class="math inline">\(Q\)</span>) is processed, while <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> from previous steps are stored and concatenated:</p>
 <p><span class="math display">\[
 K_{\text{cached}} = \text{Concat}(K_{\text{prev}}, K_{\text{new}}), \quad V_{\text{cached}} = \text{Concat}(V_{\text{prev}}, V_{\text{new}})
 \]</span></p>
 <p>Here: - <span class="math inline">\(K_{\text{prev}}\)</span> and <span class="math inline">\(V_{\text{prev}}\)</span> are the cached keys and values from earlier time steps. - <span class="math inline">\(K_{\text{new}}\)</span> and <span class="math inline">\(V_{\text{new}}\)</span> are the keys and values for the current token.</p>
 </section>
-<section id="computing-attention" class="level4">
-<h4 class="anchored" data-anchor-id="computing-attention">Computing Attention</h4>
+<section id="computing-attention" class="level4" data-number="1.2.1.2">
+<h4 data-number="1.2.1.2" class="anchored" data-anchor-id="computing-attention"><span class="header-section-number">1.2.1.2</span> Computing Attention</h4>
 <p>The attention mechanism remains the same but operates over the concatenated cached keys and values:</p>
 <p><span class="math display">\[
 \text{Attention}(Q, K_{\text{cached}}, V_{\text{cached}}) = \text{softmax}\left(\frac{Q K_{\text{cached}}^\top}{\sqrt{d_k}}\right)V_{\text{cached}}
 \]</span></p>
 </section>
 </section>
-<section id="efficiency" class="level3">
-<h3 class="anchored" data-anchor-id="efficiency">Efficiency</h3>
+<section id="efficiency" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="efficiency"><span class="header-section-number">1.2.2</span> Efficiency</h3>
 <ul>
 <li><strong>Reduced Redundancy</strong>: By caching, recomputation of ( K ) and ( V ) for all tokens is avoided, significantly speeding up inference for long sequences.</li>
 <li><strong>Scalability</strong>: This makes the model more memory-efficient, especially for real-time or autoregressive tasks like text generation.</li>
@@ -461,8 +476,8 @@ K_{\text{cached}} = \text{Concat}(K_{\text{prev}}, K_{\text{new}}), \quad V_{\te
 </div>
 </section>
 </section>
-<section id="group-query-attention-with-kv-cache" class="level2">
-<h2 class="anchored" data-anchor-id="group-query-attention-with-kv-cache">Group Query Attention with KV Cache</h2>
+<section id="group-query-attention-with-kv-cache" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="group-query-attention-with-kv-cache"><span class="header-section-number">1.3</span> Group Query Attention with KV Cache</h2>
 <p>Group Query Attention with KV Cache is an extension of multi-head attention where multiple query heads attend to the same cached key and value pairs. This allows the model to efficiently process key-value caches while reusing the same key-value heads across multiple queries, improving performance, especially in autoregressive tasks.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -470,17 +485,17 @@ K_{\text{cached}} = \text{Concat}(K_{\text{prev}}, K_{\text{new}}), \quad V_{\te
 <figcaption>GQA</figcaption>
 </figure>
 </div>
-<section id="key-differences-and-modifications-1" class="level3">
-<h3 class="anchored" data-anchor-id="key-differences-and-modifications-1">Key Differences and Modifications</h3>
-<section id="grouping-query-heads" class="level4">
-<h4 class="anchored" data-anchor-id="grouping-query-heads">Grouping Query Heads</h4>
+<section id="key-differences-and-modifications-1" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="key-differences-and-modifications-1"><span class="header-section-number">1.3.1</span> Key Differences and Modifications</h3>
+<section id="grouping-query-heads" class="level4" data-number="1.3.1.1">
+<h4 data-number="1.3.1.1" class="anchored" data-anchor-id="grouping-query-heads"><span class="header-section-number">1.3.1.1</span> Grouping Query Heads</h4>
 <p>Instead of having separate key-value heads for each query head, the model groups query heads that attend to the same cached key and value heads. The number of query heads per group is determined by dividing the total number of query heads by the number of key-value heads.</p>
 <p><span class="math display">\[
 \text{kv\_per\_head} = \frac{n_{\text{heads}}}{n_{\text{kv\_heads}}}
 \]</span></p>
 </section>
-<section id="key-and-value-caching" class="level4">
-<h4 class="anchored" data-anchor-id="key-and-value-caching">Key and Value Caching</h4>
+<section id="key-and-value-caching" class="level4" data-number="1.3.1.2">
+<h4 data-number="1.3.1.2" class="anchored" data-anchor-id="key-and-value-caching"><span class="header-section-number">1.3.1.2</span> Key and Value Caching</h4>
 <p>As the attention mechanism processes input tokens, the keys (<span class="math inline">\(K\)</span>) and values (<span class="math inline">\(V\)</span>) for earlier tokens are cached to avoid recomputation in subsequent time steps. These cached keys and values are stored in buffers, which are updated at each new time step:</p>
 <p><span class="math display">\[
 \text{cache } K[:, \text{start\_pos}: \text{start\_pos}+1, :, :] = K
@@ -489,8 +504,8 @@ K_{\text{cached}} = \text{Concat}(K_{\text{prev}}, K_{\text{new}}), \quad V_{\te
 \]</span></p>
 <p>The cached keys and values are then used in the computation of attention scores, reducing the need for recalculating them for each new token.</p>
 </section>
-<section id="attention-computation" class="level4">
-<h4 class="anchored" data-anchor-id="attention-computation">Attention Computation</h4>
+<section id="attention-computation" class="level4" data-number="1.3.1.3">
+<h4 data-number="1.3.1.3" class="anchored" data-anchor-id="attention-computation"><span class="header-section-number">1.3.1.3</span> Attention Computation</h4>
 <p>For each query head in the group, attention is computed over the cached keys and values. The key and value matrices are repeated across multiple query heads (i.e., the <span class="math inline">\(K\)</span> and <span class="math inline">\(V\)</span> tensors are repeated <span class="math inline">\(\text{kv\_per\_head}\)</span> times) to account for multiple query heads attending to the same set of key-value heads:</p>
 <p><span class="math display">\[
 K = K \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
@@ -498,8 +513,8 @@ K = K \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
 V = V \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
 \]</span></p>
 </section>
-<section id="scaled-dot-product-attention-1" class="level4">
-<h4 class="anchored" data-anchor-id="scaled-dot-product-attention-1">Scaled Dot-Product Attention</h4>
+<section id="scaled-dot-product-attention-1" class="level4" data-number="1.3.1.4">
+<h4 data-number="1.3.1.4" class="anchored" data-anchor-id="scaled-dot-product-attention-1"><span class="header-section-number">1.3.1.4</span> Scaled Dot-Product Attention</h4>
 <p>The attention scores are computed as the dot product between the queries and the keys, followed by a scaling factor to normalize the scores:</p>
 <p><span class="math display">\[
 \text{scores} = \frac{Q K^\top}{\sqrt{d_k}}
@@ -575,8 +590,8 @@ V = V \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
 </section>
 </section>
 </section>
-<section id="multi-head-latent-attention-mla" class="level2">
-<h2 class="anchored" data-anchor-id="multi-head-latent-attention-mla">Multi-Head Latent Attention (MLA)</h2>
+<section id="multi-head-latent-attention-mla" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="multi-head-latent-attention-mla"><span class="header-section-number">1.4</span> Multi-Head Latent Attention (MLA)</h2>
 <p>In <strong>Multi-Head Latent Attention (MLA)</strong>, a key technique is the <strong>low-rank joint compression</strong> of the key and value matrices to significantly reduce memory usage in the key-value (KV) cache. This technique is particularly useful for long sequences, where the KV cache size could become a bottleneck.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -584,8 +599,8 @@ V = V \cdot \text{repeat\_interleave}(\text{kv\_per\_head}, \text{dim}=1)
 <figcaption>MLA</figcaption>
 </figure>
 </div>
-<section id="low-rank-key-value-compression" class="level4">
-<h4 class="anchored" data-anchor-id="low-rank-key-value-compression">1. Low-Rank Key-Value Compression</h4>
+<section id="low-rank-key-value-compression" class="level4" data-number="1.4.0.1">
+<h4 data-number="1.4.0.1" class="anchored" data-anchor-id="low-rank-key-value-compression"><span class="header-section-number">1.4.0.1</span> 1. Low-Rank Key-Value Compression</h4>
 <p>The MLA approach starts by compressing the keys and values jointly into a smaller latent space, reducing the memory requirement for storing them. The key operations are:</p>
 <ul>
 <li><p><strong>Down-Projection</strong>: The original key-value matrix <span class="math inline">\(h_t\)</span> (size <span class="math inline">\(d \times n_{\text{heads}}\)</span>) is projected down to a lower-dimensional latent space <span class="math inline">\(c_{KV_t}\)</span> (size <span class="math inline">\(d_c\)</span>) using the down-projection matrix <span class="math inline">\(W_{D_{KV}}\)</span>:</p>
@@ -601,13 +616,13 @@ k_{C_t} = W_{U_K} c_{KV_t}, \quad v_{C_t} = W_{U_V} c_{KV_t}
 </ul>
 <p>The benefit of this low-rank joint compression is that it significantly reduces the memory footprint of the KV cache. Specifically, instead of storing the full-sized key and value matrices, we only store the compressed latent vectors <span class="math inline">\(c_{KV_t}\)</span>, which require much less space.</p>
 </section>
-<section id="key-value-cache-reduction" class="level4">
-<h4 class="anchored" data-anchor-id="key-value-cache-reduction">2. Key-Value Cache Reduction</h4>
+<section id="key-value-cache-reduction" class="level4" data-number="1.4.0.2">
+<h4 data-number="1.4.0.2" class="anchored" data-anchor-id="key-value-cache-reduction"><span class="header-section-number">1.4.0.2</span> 2. Key-Value Cache Reduction</h4>
 <p>During inference, the compressed vectors <span class="math inline">\(c_{KV_t}\)</span> are cached, significantly reducing the memory required for storing keys and values across layers. The total size of the KV cache is proportional to <span class="math inline">\(d_c\)</span> (the compressed latent dimension), which is much smaller than the original dimensionality.</p>
 <p>In practical terms, the KV cache has only <span class="math inline">\(d_c \times l\)</span> elements (where <span class="math inline">\(l\)</span> is the number of layers), instead of the full-size key-value matrices for each layer.</p>
 </section>
-<section id="query-compression" class="level4">
-<h4 class="anchored" data-anchor-id="query-compression">3. Query Compression</h4>
+<section id="query-compression" class="level4" data-number="1.4.0.3">
+<h4 data-number="1.4.0.3" class="anchored" data-anchor-id="query-compression"><span class="header-section-number">1.4.0.3</span> 3. Query Compression</h4>
 <p>In addition to compressing the keys and values, MLA also compresses the queries to further reduce the activation memory during training. This compression is done through similar down-projection and up-projection steps:</p>
 <ul>
 <li><p><strong>Down-Projection of Queries</strong>: The queries <span class="math inline">\(h_t\)</span> are projected down into a smaller latent vector <span class="math inline">\(c_{Q_t}\)</span> using the down-projection matrix <span class="math inline">\(W_{D_Q}\)</span>:</p>
@@ -623,12 +638,12 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 </ul>
 <p>This query compression reduces the memory needed for the query representations, helping to alleviate memory pressure during training.</p>
 </section>
-<section id="inference-optimization" class="level4">
-<h4 class="anchored" data-anchor-id="inference-optimization">4. Inference Optimization</h4>
+<section id="inference-optimization" class="level4" data-number="1.4.0.4">
+<h4 data-number="1.4.0.4" class="anchored" data-anchor-id="inference-optimization"><span class="header-section-number">1.4.0.4</span> 4. Inference Optimization</h4>
 <p>During inference, additional optimizations are possible. Specifically, the up-projection matrices for keys <span class="math inline">\(W_{U_K}\)</span> and values <span class="math inline">\(W_{U_V}\)</span> can be absorbed into the projection matrices <span class="math inline">\(W_Q\)</span> and <span class="math inline">\(W_O\)</span>, respectively, for queries and outputs. This means that the keys and values do not need to be computed explicitly during inference, further reducing memory and computation costs.</p>
 </section>
-<section id="summary-of-mlas-key-components" class="level4">
-<h4 class="anchored" data-anchor-id="summary-of-mlas-key-components">Summary of MLA’s Key Components:</h4>
+<section id="summary-of-mlas-key-components" class="level4" data-number="1.4.0.5">
+<h4 data-number="1.4.0.5" class="anchored" data-anchor-id="summary-of-mlas-key-components"><span class="header-section-number">1.4.0.5</span> Summary of MLA’s Key Components:</h4>
 <ul>
 <li><strong>Key-Value Compression</strong>: Low-rank joint compression reduces memory usage for keys and values in the KV cache.</li>
 <li><strong>Query Compression</strong>: Compresses queries to reduce activation memory during training.</li>
@@ -636,8 +651,8 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 <li><strong>Reduced KV Cache Size</strong>: Only the compressed latent vectors <span class="math inline">\(c_{KV_t}\)</span> need to be cached, which significantly reduces memory usage.</li>
 </ul>
 </section>
-<section id="mathematical-notation-recap" class="level4">
-<h4 class="anchored" data-anchor-id="mathematical-notation-recap">Mathematical Notation Recap:</h4>
+<section id="mathematical-notation-recap" class="level4" data-number="1.4.0.6">
+<h4 data-number="1.4.0.6" class="anchored" data-anchor-id="mathematical-notation-recap"><span class="header-section-number">1.4.0.6</span> Mathematical Notation Recap:</h4>
 <ul>
 <li><strong>Compressed Latent Vector for Keys and Values</strong>: <span class="math inline">\(c_{KV_t} = W_{D_{KV}} h_t\)</span></li>
 <li><strong>Up-Projection of Keys and Values</strong>: <span class="math inline">\(k_{C_t} = W_{U_K} c_{KV_t}, \quad v_{C_t} = W_{U_V} c_{KV_t}\)</span></li>
@@ -815,10 +830,10 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 </div>
 </section>
 </section>
-<section id="memory-usage-comparison" class="level2">
-<h2 class="anchored" data-anchor-id="memory-usage-comparison">Memory Usage Comparison</h2>
-<section id="memory-usage-in-multi-head-attention" class="level4">
-<h4 class="anchored" data-anchor-id="memory-usage-in-multi-head-attention">1. Memory Usage in Multi-Head Attention</h4>
+<section id="memory-usage-comparison" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="memory-usage-comparison"><span class="header-section-number">1.5</span> Memory Usage Comparison</h2>
+<section id="memory-usage-in-multi-head-attention" class="level4" data-number="1.5.0.1">
+<h4 data-number="1.5.0.1" class="anchored" data-anchor-id="memory-usage-in-multi-head-attention"><span class="header-section-number">1.5.0.1</span> 1. Memory Usage in Multi-Head Attention</h4>
 <p>In Multi-Head Attention (MHA), for each query, separate key-value heads are used. This means for each query head, there is a corresponding set of keys and values. The size of the key and value matrices increases with the number of heads, leading to higher memory requirements.</p>
 <p>For an input sequence of length <span class="math inline">\(T\)</span>, model dimension <span class="math inline">\(d_{\text{model}}\)</span>, and number of attention heads <span class="math inline">\(n_{\text{heads}}\)</span>, the memory required for storing keys and values is proportional to:</p>
 <p><span class="math display">\[
@@ -828,8 +843,8 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 <p><strong>Key and Value Memory:</strong></p>
 <p>In MHA, each query head has its own unique key and value projections, so the memory for storing keys and values grows with <span class="math inline">\(n_{\text{heads}}\)</span>, the number of heads.</p>
 </section>
-<section id="memory-usage-in-group-query-attention" class="level4">
-<h4 class="anchored" data-anchor-id="memory-usage-in-group-query-attention">2. Memory Usage in Group Query Attention</h4>
+<section id="memory-usage-in-group-query-attention" class="level4" data-number="1.5.0.2">
+<h4 data-number="1.5.0.2" class="anchored" data-anchor-id="memory-usage-in-group-query-attention"><span class="header-section-number">1.5.0.2</span> 2. Memory Usage in Group Query Attention</h4>
 <p>In Group Query Attention, multiple query heads share the same key and value heads, significantly reducing the number of unique key-value matrices stored in memory. This grouping reduces the total memory needed to store the keys and values, as multiple query heads attend to the same key and value matrices.</p>
 <p>The key-value heads are shared across query heads, and the number of key-value heads is determined by <span class="math inline">\(n_{\text{kv\_heads}}\)</span>. The memory for storing keys and values is now:</p>
 <p><span class="math display">\[
@@ -839,8 +854,8 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 <p><strong>Key and Value Memory Reduction:</strong></p>
 <p>Since the keys and values are repeated across multiple query heads, this leads to a reduction in memory usage. Specifically, the number of key-value heads <span class="math inline">\(n_{\text{kv\_heads}}\)</span> is much smaller than the total number of heads <span class="math inline">\(n_{\text{heads}}\)</span> in MHA, leading to lower memory usage.</p>
 </section>
-<section id="memory-usage-in-multi-query-attention-a-variation-of-group-query-attention" class="level4">
-<h4 class="anchored" data-anchor-id="memory-usage-in-multi-query-attention-a-variation-of-group-query-attention">3. Memory Usage in Multi-Query Attention (a Variation of Group Query Attention)</h4>
+<section id="memory-usage-in-multi-query-attention-a-variation-of-group-query-attention" class="level4" data-number="1.5.0.3">
+<h4 data-number="1.5.0.3" class="anchored" data-anchor-id="memory-usage-in-multi-query-attention-a-variation-of-group-query-attention"><span class="header-section-number">1.5.0.3</span> 3. Memory Usage in Multi-Query Attention (a Variation of Group Query Attention)</h4>
 <p>Multi-Query Attention is a variation of Group Query Attention where all query heads attend to the same set of key-value heads. Instead of having multiple key-value heads, all query heads in Multi-Query Attention use the same set of keys and values. This leads to the most significant memory reduction, as there is only a single key-value matrix shared across all query heads.</p>
 <p>In Multi-Query Attention, the number of key-value heads <span class="math inline">\(n_{\text{kv\_heads}}\)</span> is equal to 1, as all query heads attend to the same key and value:</p>
 <p><span class="math display">\[
@@ -848,16 +863,16 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 \]</span></p>
 <p>In this case, there is only one key-value matrix to store, which drastically reduces memory usage compared to both MHA and Group Query Attention.</p>
 </section>
-<section id="memory-usage-in-multi-head-latent-attention-mla" class="level4">
-<h4 class="anchored" data-anchor-id="memory-usage-in-multi-head-latent-attention-mla">4. Memory Usage in Multi-Head Latent Attention (MLA)</h4>
+<section id="memory-usage-in-multi-head-latent-attention-mla" class="level4" data-number="1.5.0.4">
+<h4 data-number="1.5.0.4" class="anchored" data-anchor-id="memory-usage-in-multi-head-latent-attention-mla"><span class="header-section-number">1.5.0.4</span> 4. Memory Usage in Multi-Head Latent Attention (MLA)</h4>
 <p>Multi-Head Latent Attention (MLA) introduces an additional technique to further reduce memory usage by compressing the key and value matrices into a lower-dimensional latent space. This low-rank joint compression of keys and values helps in reducing the size of the key-value cache while maintaining the ability to compute attention effectively.</p>
 <p>In MLA, the key-value matrices are compressed into a latent space of dimension <span class="math inline">\(d_c\)</span>, where <span class="math inline">\(d_c\)</span> is much smaller than the original dimension <span class="math inline">\(d_{\text{model}}\)</span>. The memory for storing compressed key-value matrices is proportional to:</p>
 <p><span class="math display">\[
 \text{Memory}_{\text{keys/values}} = T \times d_c
 \]</span></p>
 </section>
-<section id="memory-comparison" class="level3">
-<h3 class="anchored" data-anchor-id="memory-comparison">Memory Comparison</h3>
+<section id="memory-comparison" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="memory-comparison"><span class="header-section-number">1.5.1</span> Memory Comparison</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 42%">
@@ -890,8 +905,8 @@ q_{C_t} = W_{U_Q} c_{Q_t}
 </table>
 </section>
 </section>
-<section id="experiments" class="level2">
-<h2 class="anchored" data-anchor-id="experiments">Experiments</h2>
+<section id="experiments" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="experiments"><span class="header-section-number">1.6</span> Experiments</h2>
 <p>In the following experiments, we will evaluate the performance and memory efficiency of different attention modules in an autoregressive generation setup. Using the profile_model function, we will measure key metrics such as memory usage, generation speed, and the number of trainable parameters. Each module will be tested with KV Cache enabled to optimize performance and reduce redundant computations.</p>
 <p>For consistency and fairness, all models will share the same configuration: batch size, sequence length, token dimensions, and number of attention heads. The goal is not to assess the correctness or quality of the models but rather to validate whether their performance and memory usage align with theoretical expectations.</p>
 <p>Below is the code for the generation loop and profiling. Through this analysis, we aim to understand the trade-offs each attention mechanism presents in terms of efficiency and scalability.</p>
@@ -1097,14 +1112,14 @@ Model: MLA KV Cache Compress, Total Time: 30.92s, Memory Usage: 226.52MB, Parame
 </div>
 </div>
 </section>
-<section id="observations" class="level2">
-<h2 class="anchored" data-anchor-id="observations">Observations</h2>
-<section id="number-of-parameters" class="level3">
-<h3 class="anchored" data-anchor-id="number-of-parameters">1. Number of Parameters</h3>
+<section id="observations" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="observations"><span class="header-section-number">1.7</span> Observations</h2>
+<section id="number-of-parameters" class="level3" data-number="1.7.1">
+<h3 data-number="1.7.1" class="anchored" data-anchor-id="number-of-parameters"><span class="header-section-number">1.7.1</span> 1. Number of Parameters</h3>
 <p>The number of parameters follows the order <strong>MHA &gt; GQA &gt; MQA &gt; MLA</strong>. This is because MHA maintains independent key-value projections for all heads, whereas MLA uses low-rank approximations.</p>
 </section>
-<section id="memory-usage" class="level3">
-<h3 class="anchored" data-anchor-id="memory-usage">2. Memory Usage</h3>
+<section id="memory-usage" class="level3" data-number="1.7.2">
+<h3 data-number="1.7.2" class="anchored" data-anchor-id="memory-usage"><span class="header-section-number">1.7.2</span> 2. Memory Usage</h3>
 <ul>
 <li><strong>MHA</strong>: The highest memory usage, as the key-value cache stores projections for all heads independently.<br>
 </li>
@@ -1120,8 +1135,8 @@ Model: MLA KV Cache Compress, Total Time: 30.92s, Memory Usage: 226.52MB, Parame
 </ul></li>
 </ul>
 </section>
-<section id="throughput-tokenss" class="level3">
-<h3 class="anchored" data-anchor-id="throughput-tokenss">3. Throughput (Tokens/s)</h3>
+<section id="throughput-tokenss" class="level3" data-number="1.7.3">
+<h3 data-number="1.7.3" class="anchored" data-anchor-id="throughput-tokenss"><span class="header-section-number">1.7.3</span> 3. Throughput (Tokens/s)</h3>
 <ul>
 <li><strong>MLA with Decompressed KV</strong> achieves higher throughput than MLA with Compressed KV.<br>
 </li>
@@ -1130,16 +1145,16 @@ Model: MLA KV Cache Compress, Total Time: 30.92s, Memory Usage: 226.52MB, Parame
 <li>Despite this overhead, MLA remains efficient in memory and parameters, with the decompressed variant being the better choice for practical implementations, as demonstrated in the DeepSeek paper.</li>
 </ul>
 </section>
-<section id="mlas-advantages-over-mha" class="level3">
-<h3 class="anchored" data-anchor-id="mlas-advantages-over-mha">4. MLA’s Advantages Over MHA</h3>
+<section id="mlas-advantages-over-mha" class="level3" data-number="1.7.4">
+<h3 data-number="1.7.4" class="anchored" data-anchor-id="mlas-advantages-over-mha"><span class="header-section-number">1.7.4</span> 4. MLA’s Advantages Over MHA</h3>
 <ul>
 <li>MLA achieves significantly fewer parameters by using low-rank approximations like LoRA (Low-Rank Adaptation) for key and value projection matrices.<br>
 </li>
 <li>While MLA reduces parameters, the DeepSeek paper claims its prediction quality is on par with or better than MHA. This makes MLA attractive for memory-constrained environments without sacrificing quality.</li>
 </ul>
 </section>
-<section id="trade-offs-between-models" class="level3">
-<h3 class="anchored" data-anchor-id="trade-offs-between-models">5. Trade-offs Between Models</h3>
+<section id="trade-offs-between-models" class="level3" data-number="1.7.5">
+<h3 data-number="1.7.5" class="anchored" data-anchor-id="trade-offs-between-models"><span class="header-section-number">1.7.5</span> 5. Trade-offs Between Models</h3>
 <ul>
 <li><strong>MHA</strong>: Best prediction quality due to the highest expressiveness, enabled by the largest number of parameters.<br>
 </li>
@@ -1159,8 +1174,8 @@ Model: MLA KV Cache Compress, Total Time: 30.92s, Memory Usage: 226.52MB, Parame
 </ul>
 <hr>
 </section>
-<section id="additional-consideration" class="level3">
-<h3 class="anchored" data-anchor-id="additional-consideration">Additional Consideration</h3>
+<section id="additional-consideration" class="level3" data-number="1.7.6">
+<h3 data-number="1.7.6" class="anchored" data-anchor-id="additional-consideration"><span class="header-section-number">1.7.6</span> Additional Consideration</h3>
 <p>Each model aligns with specific use cases: - <strong>MHA</strong>: Suited for scenarios where prediction quality is paramount, regardless of resource cost.<br>
 - <strong>MQA/GQA</strong>: Ideal for real-time systems with stringent latency requirements.<br>
 - <strong>MLA</strong>: Best for memory-constrained environments, such as edge devices or applications with limited hardware resources.</p>
@@ -1539,8 +1554,8 @@ Model: MLA KV Cache Compress, Total Time: 30.92s, Memory Usage: 226.52MB, Parame
 </div>
 </section>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+<section id="references" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="references"><span class="header-section-number">1.8</span> References</h2>
 <ol type="1">
 <li><a href="https://arxiv.org/pdf/1706.03762">Attention Is All You Need</a></li>
 <li><a href="https://arxiv.org/pdf/2405.04434">DeepSeek-V2</a></li>
